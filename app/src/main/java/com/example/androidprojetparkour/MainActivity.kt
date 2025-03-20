@@ -37,17 +37,20 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.models.competitions.Competitions
 import com.example.androidprojetparkour.api.models.competitions.CompetitionsItem
+import com.example.androidprojetparkour.api.models.competitors.Competitors
+import com.example.androidprojetparkour.api.models.competitors.CompetitorsItem
 import com.example.androidprojetparkour.api.models.performances.CompetitorPerformance
 import com.example.androidprojetparkour.api.models.performances.Performances
 import com.example.androidprojetparkour.ui.theme.AndroidProjetParkourTheme
 import com.example.androidprojetparkour.viewModel.CompetitionsViewModel
+import com.example.androidprojetparkour.viewModel.CompetitorsViewModel
 import com.example.androidprojetparkour.viewModel.PerformancesViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val parkourViewModel = ViewModelProvider(this)[PerformancesViewModel::class.java]
+        val parkourViewModel = ViewModelProvider(this)[CompetitorsViewModel::class.java]
 
         enableEdgeToEdge()
         setContent {
@@ -63,11 +66,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ParkourPage(viewModel: PerformancesViewModel){
-    val competitionsResult = viewModel.competitorPerformancesResult.observeAsState()
+fun ParkourPage(viewModel: CompetitorsViewModel){
+    val competitionsResult = viewModel.competitorResult.observeAsState()
     Column {
         IconButton(onClick = {
-            viewModel.getCompetitorPerformances(213)
+            viewModel.getOneCompetitor(211)
         }) {
             Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
         }
@@ -89,7 +92,7 @@ fun ParkourPage(viewModel: PerformancesViewModel){
 }
 
 @Composable
-fun ParkourDetails(data : CompetitorPerformance){
+fun ParkourDetails(data : CompetitorsItem){
     Column(
         modifier = Modifier.fillMaxWidth()
             .padding(vertical = 8.dp),
@@ -103,33 +106,23 @@ fun ParkourDetails(data : CompetitorPerformance){
             Text(
                 text = "Compétitions", fontSize = 30.sp,
             )
-            Row {
+            /*Row {
                 Icon(
                     imageVector = Icons.Default.AccountCircle,
                     contentDescription = "personne",
                     modifier = Modifier.size(40.dp)
                 )
                 Text(text = data.competitor.first_name + " " + data.competitor.last_name, fontSize = 30.sp)
-            }
+            }*/
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()).fillMaxWidth()
             ) {
-                //Log.d("ListePerformances", data.performances.toString())
-                for(perf in data.performances){
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "personne",
-                        modifier = Modifier.size(40.dp)
-                    )
-                    Text(text = perf.id.toString())
-                    Text(text = perf.competitor_id.toString())
-                    Text(text = perf.course_id.toString())
-                    Text(text = perf.status)
-                    Text(text = perf.total_time.toString())
-                    Text(text = perf.access_token_id.toString())
-                    Text(text = perf.created_at)
-                    Text(text = perf.updated_at)
-                }
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "personne",
+                    modifier = Modifier.size(40.dp)
+                )
+                Text(text = data.first_name + " " + data.last_name)
             }
 
         }
