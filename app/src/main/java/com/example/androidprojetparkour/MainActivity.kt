@@ -41,80 +41,16 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.models.Competitions
 import com.example.androidprojetparkour.ui.theme.AndroidProjetParkourTheme
+import com.example.androidprojetparkour.vue.vueListCompetition
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val parkourViewModel = ViewModelProvider(this)[ParkourViewModel::class.java]
-
         enableEdgeToEdge()
         setContent {
-            AndroidProjetParkourTheme {
-                Surface( ) {
-                    ParkourPage(parkourViewModel)
-                }
-            }
+            val parkourViewModel = ViewModelProvider(this)[ParkourViewModel::class.java]
+            vueListCompetition(parkourViewModel)
         }
     }
 }
 
-@Composable
-fun ParkourPage(viewModel: ParkourViewModel){
-    val competitionsResult = viewModel.parkourResult.observeAsState()
-
-    LaunchedEffect(Unit) {
-        viewModel.getData()
-    }
-    Column {
-        when(val result = competitionsResult.value){
-            is NetworkResponse.Error -> {
-                Text(text = result.message)
-            }
-            NetworkResponse.Loading -> {
-                CircularProgressIndicator()
-            }
-            is NetworkResponse.Success -> {
-                ParkourDetails(data = result.data)
-            }
-            null -> {}
-        }
-
-    }
-}
-
-@Composable
-fun ParkourDetails(data : Competitions){
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Spacer(modifier = Modifier.height(35.dp))
-
-                Text("List of Competition", fontSize = 40.sp)
-
-
-            Spacer(modifier = Modifier.height(25.dp))
-            for(competition in data){
-                Button({}, modifier = Modifier.padding(10.dp).height(70.dp).width(300.dp)) {
-                    Text(
-                        text = competition.name,
-                        fontSize = 30.sp,
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-            }
-        }
-
-        Button(
-            onClick = { },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-        ) {
-            Text("New", fontSize = 25.sp)
-        }
-    }
-}
