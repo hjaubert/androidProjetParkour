@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import com.example.androidprojetparkour.ParkourViewModel
 import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.models.Competitions
@@ -28,6 +29,8 @@ import com.example.androidprojetparkour.api.models.Competitions
 
 @Composable
 fun vueListCompetition(viewModel: ParkourViewModel){
+
+
     val competitionsResult = viewModel.parkourResult.observeAsState()
 
     LaunchedEffect(Unit) {
