@@ -1,5 +1,7 @@
 package com.example.androidprojetparkour
 
+import android.app.Application
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,8 +16,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,10 +35,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.models.Competitions
 import com.example.androidprojetparkour.ui.theme.AndroidProjetParkourTheme
+import com.example.androidprojetparkour.vue.NewCompetition
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +63,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ParkourPage(viewModel: ParkourViewModel){
-    val competitionsResult = viewModel.parkourResult.observeAsState()
+        val competitionsResult = viewModel.parkourResult.observeAsState()
     Column {
         IconButton(onClick = {
             viewModel.getData()
@@ -77,7 +83,6 @@ fun ParkourPage(viewModel: ParkourViewModel){
             }
             null -> {}
         }
-
     }
 }
 
