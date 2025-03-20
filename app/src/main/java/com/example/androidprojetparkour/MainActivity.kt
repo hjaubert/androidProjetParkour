@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Info
@@ -50,9 +51,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AndroidProjetParkourTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize().padding(20.dp).background(Color.White)
-                ) {
+                Surface( ) {
                     ParkourPage(parkourViewModel)
                 }
             }
@@ -92,11 +91,20 @@ fun ParkourDetails(data : Competitions){
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Spacer(modifier = Modifier.height(25.dp))
-            Text("List of Competition", fontSize = 40.sp)
+            Spacer(modifier = Modifier.height(35.dp))
+
+                Text("List of Competition", fontSize = 40.sp)
+
+
             Spacer(modifier = Modifier.height(25.dp))
             for(competition in data){
-                Text(text = competition.name, fontSize = 30.sp, modifier = Modifier.padding(10.dp))
+                Button({}, modifier = Modifier.padding(10.dp).height(70.dp).width(300.dp)) {
+                    Text(
+                        text = competition.name,
+                        fontSize = 30.sp,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
             }
         }
 
@@ -106,7 +114,7 @@ fun ParkourDetails(data : Competitions){
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
         ) {
-            Text("New")
+            Text("New", fontSize = 25.sp)
         }
     }
 }
