@@ -1,4 +1,4 @@
-package com.example.androidprojetparkour.api
+package com.example.androidprojetparkour.api.models
 
 data class CompetitionsItem(
     val age_max: Int,
