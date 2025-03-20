@@ -19,16 +19,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.ParkourViewModel
 import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.models.Competitions
-
-
+import com.example.androidprojetparkour.router.Routes
 
 
 @Composable
-fun vueListCompetition(viewModel: ParkourViewModel){
+fun vueListCompetition(viewModel: ParkourViewModel, navController: NavHostController){
 
 
     val competitionsResult = viewModel.parkourResult.observeAsState()
@@ -45,7 +44,7 @@ fun vueListCompetition(viewModel: ParkourViewModel){
                 CircularProgressIndicator()
             }
             is NetworkResponse.Success -> {
-                ParkourDetails(data = result.data)
+                ParkourDetails(data = result.data,navController)
             }
             null -> {}
         }
@@ -54,7 +53,7 @@ fun vueListCompetition(viewModel: ParkourViewModel){
 }
 
 @Composable
-fun ParkourDetails(data : Competitions){
+fun ParkourDetails(data: Competitions, navController: NavHostController){
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -68,7 +67,9 @@ fun ParkourDetails(data : Competitions){
 
             Spacer(modifier = Modifier.height(25.dp))
             for(competition in data){
-                Button({}, modifier = Modifier.padding(10.dp).height(70.dp).width(300.dp)) {
+                Button({
+                    navController.navigate(Routes.vueInfoCompetition+"/"+competition.id)
+                }, modifier = Modifier.padding(10.dp).height(70.dp).width(300.dp)) {
                     Text(
                         text = competition.name,
                         fontSize = 30.sp,

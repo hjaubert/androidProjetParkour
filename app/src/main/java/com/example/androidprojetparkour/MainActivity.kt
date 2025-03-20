@@ -14,9 +14,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val viewModel = ViewModelProvider(this)[ParkourViewModel::class.java]
             Router(viewModel)
-
-
-
         }
     }
 }
