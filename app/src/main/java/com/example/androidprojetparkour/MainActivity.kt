@@ -112,9 +112,9 @@ fun ParkourDetails(data : CompetitorPerformance){
                 Text(text = data.competitor.first_name + " " + data.competitor.last_name, fontSize = 30.sp)
             }
             Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
+                modifier = Modifier.verticalScroll(rememberScrollState()).fillMaxWidth()
             ) {
-                Log.d("ListePerformances", data.performances.toString())
+                //Log.d("ListePerformances", data.performances.toString())
                 for(perf in data.performances){
                     Icon(
                         imageVector = Icons.Default.Star,
