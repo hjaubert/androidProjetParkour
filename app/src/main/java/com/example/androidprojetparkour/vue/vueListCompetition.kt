@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.ParkourViewModel
 import com.example.androidprojetparkour.api.NetworkResponse
@@ -27,9 +28,9 @@ import com.example.androidprojetparkour.router.Routes
 
 
 @Composable
-fun vueListCompetition(viewModel: ParkourViewModel, navController: NavHostController){
+fun vueListCompetition(viewModels: ViewModelProvider, navController: NavHostController){
 
-
+    val viewModel = viewModels[ParkourViewModel::class.java]
     val competitionsResult = viewModel.parkourResult.observeAsState()
 
     LaunchedEffect(Unit) {
