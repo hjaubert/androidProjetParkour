@@ -12,12 +12,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val viewModel = ViewModelProvider(this)[ParkourViewModel::class.java]
+            val viewModel = ViewModelProvider(this)
             Router(viewModel)
-
-
-
         }
     }
 }
-
