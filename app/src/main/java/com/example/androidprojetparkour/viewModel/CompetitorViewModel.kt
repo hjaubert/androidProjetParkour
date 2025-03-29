@@ -1,6 +1,5 @@
 package com.example.androidprojetparkour.viewModel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,76 +10,110 @@ import com.example.androidprojetparkour.api.models.competitors.Competitors
 import com.example.androidprojetparkour.api.models.competitors.CompetitorsItem
 import kotlinx.coroutines.launch
 
-class CompetitorViewModel: ViewModel() {
+class CompetitorViewModel : ViewModel() {
 
     private val parkourApi = RetrofitInstance.parkourApi
 
     private val _competitors = MutableLiveData<NetworkResponse<Competitors>>()
-    val competitors : LiveData<NetworkResponse<Competitors>> = _competitors
+    val competitors: LiveData<NetworkResponse<Competitors>> = _competitors
 
-    private val _oneCompetitor = MutableLiveData<NetworkResponse<CompetitorsItem>>()
-    val oneCompetitor : LiveData<NetworkResponse<CompetitorsItem>> = _oneCompetitor
+    private val _competitorDetails = MutableLiveData<NetworkResponse<CompetitorsItem>>()
+    val competitorDetails: LiveData<NetworkResponse<CompetitorsItem>> = _competitorDetails
 
-    private val _registeredCompetitorsInCompetition = MutableLiveData<NetworkResponse<Competitors>>()
-    val registeredCompetitorsInCompetition : LiveData<NetworkResponse<Competitors>> = _registeredCompetitorsInCompetition
+    private val _createCompetitorResult = MutableLiveData<NetworkResponse<CompetitorsItem>>()
+    val createCompetitorResult: LiveData<NetworkResponse<CompetitorsItem>> = _createCompetitorResult
 
-    fun getCompetitors(){
+    private val _updateCompetitorResult = MutableLiveData<NetworkResponse<CompetitorsItem>>()
+    val updateCompetitorResult: LiveData<NetworkResponse<CompetitorsItem>> = _updateCompetitorResult
+
+    private val _deleteCompetitorResult = MutableLiveData<NetworkResponse<Unit>>()
+    val deleteCompetitorResult: LiveData<NetworkResponse<Unit>> = _deleteCompetitorResult
+
+    fun getCompetitors() {
         viewModelScope.launch {
             _competitors.value = NetworkResponse.Loading
             try {
-                Log.d("Error", "0")
                 val response = parkourApi.getCompetitors()
-                Log.d("Error", "1")
-                if(response.isSuccessful){
-                    Log.d("Error", "2")
+                if (response.isSuccessful) {
                     response.body()?.let {
                         _competitors.value = NetworkResponse.Success(it)
-                        Log.d("Error", "2")
                     }
                 } else {
-                    _competitors.value = NetworkResponse.Error("Failed to load data")
-                    Log.i("Response", response.body().toString())
+                    _competitors.value = NetworkResponse.Error("Failed to load competitors")
                 }
-            } catch(e : Exception) {
-                _competitors.value = NetworkResponse.Error("Failed to load data")
+            } catch (e: Exception) {
+                _competitors.value = NetworkResponse.Error("Failed to load competitors: ${e.message}")
             }
         }
     }
 
-    fun getOneCompetitor(id: Int){
+    fun getCompetitorDetails(competitorId: Int) {
         viewModelScope.launch {
-            _oneCompetitor.value  = NetworkResponse.Loading
+            _competitorDetails.value = NetworkResponse.Loading
             try {
-                val response = parkourApi.getCompetitorsDetail(id)
-                if(response.isSuccessful){
+                val response = parkourApi.getCompetitorsDetail(competitorId)
+                if (response.isSuccessful) {
                     response.body()?.let {
-                        _oneCompetitor.value = NetworkResponse.Success(it)
+                        _competitorDetails.value = NetworkResponse.Success(it)
                     }
                 } else {
-                    _oneCompetitor.value = NetworkResponse.Error("Failed to load data")
+                    _competitorDetails.value = NetworkResponse.Error("Failed to load competitor details")
                 }
-            } catch(e : Exception) {
-                _oneCompetitor.value = NetworkResponse.Error("Failed to load data")
+            } catch (e: Exception) {
+                _competitorDetails.value = NetworkResponse.Error("Failed to load competitor details: ${e.message}")
             }
         }
     }
 
-    fun getRegisteredCompetitorsInCompetition(competitionId: Int){
+    fun createCompetitor(competitor: CompetitorsItem) {
         viewModelScope.launch {
-            _registeredCompetitorsInCompetition.value  = NetworkResponse.Loading
+            _createCompetitorResult.value = NetworkResponse.Loading
             try {
-                val response = parkourApi.getRegisteredCompetitorsInCompetition(competitionId)
-                if(response.isSuccessful){
+                val response = parkourApi.storeCompetitor(competitor)
+                if (response.isSuccessful) {
                     response.body()?.let {
-                        _registeredCompetitorsInCompetition.value = NetworkResponse.Success(it)
+                        _createCompetitorResult.value = NetworkResponse.Success(it)
                     }
                 } else {
-                    _registeredCompetitorsInCompetition.value = NetworkResponse.Error("Failed to load data")
+                    _createCompetitorResult.value = NetworkResponse.Error("Failed to create competitor")
                 }
-            } catch(e : Exception) {
-                _registeredCompetitorsInCompetition.value = NetworkResponse.Error("Failed to load data")
+            } catch (e: Exception) {
+                _createCompetitorResult.value = NetworkResponse.Error("Failed to create competitor: ${e.message}")
             }
         }
     }
 
+    fun updateCompetitor(competitorId: Int, competitor: CompetitorsItem) {
+        viewModelScope.launch {
+            _updateCompetitorResult.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.updateCompetitor(competitorId, competitor)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _updateCompetitorResult.value = NetworkResponse.Success(it)
+                    }
+                } else {
+                    _updateCompetitorResult.value = NetworkResponse.Error("Failed to update competitor")
+                }
+            } catch (e: Exception) {
+                _updateCompetitorResult.value = NetworkResponse.Error("Failed to update competitor: ${e.message}")
+            }
+        }
+    }
+
+    fun deleteCompetitor(competitorId: Int) {
+        viewModelScope.launch {
+            _deleteCompetitorResult.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.deleteCompetitor(competitorId)
+                if (response.isSuccessful) {
+                    _deleteCompetitorResult.value = NetworkResponse.Success(Unit)
+                } else {
+                    _deleteCompetitorResult.value = NetworkResponse.Error("Failed to delete competitor")
+                }
+            } catch (e: Exception) {
+                _deleteCompetitorResult.value = NetworkResponse.Error("Failed to delete competitor: ${e.message}")
+            }
+        }
+    }
 }
