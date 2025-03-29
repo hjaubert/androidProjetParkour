@@ -1,14 +1,12 @@
 package com.example.androidprojetparkour
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,11 +15,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -35,22 +30,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import com.example.androidprojetparkour.api.NetworkResponse
-import com.example.androidprojetparkour.api.models.competitions.Competitions
-import com.example.androidprojetparkour.api.models.competitions.CompetitionsItem
-import com.example.androidprojetparkour.api.models.competitors.Competitors
 import com.example.androidprojetparkour.api.models.competitors.CompetitorsItem
-import com.example.androidprojetparkour.api.models.performances.CompetitorPerformance
-import com.example.androidprojetparkour.api.models.performances.Performances
 import com.example.androidprojetparkour.ui.theme.AndroidProjetParkourTheme
-import com.example.androidprojetparkour.viewModel.CompetitionsViewModel
-import com.example.androidprojetparkour.viewModel.CompetitorsViewModel
-import com.example.androidprojetparkour.viewModel.PerformancesViewModel
+import com.example.androidprojetparkour.viewModel.CompetitorViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val parkourViewModel = ViewModelProvider(this)[CompetitorsViewModel::class.java]
+        val parkourViewModel = ViewModelProvider(this)[CompetitorViewModel::class.java]
 
         enableEdgeToEdge()
         setContent {
@@ -66,8 +54,8 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ParkourPage(viewModel: CompetitorsViewModel){
-    val competitionsResult = viewModel.competitorResult.observeAsState()
+fun ParkourPage(viewModel: CompetitorViewModel){
+    val competitionsResult = viewModel.oneCompetitor.observeAsState()
     Column {
         IconButton(onClick = {
             viewModel.getOneCompetitor(211)
