@@ -21,20 +21,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
-import com.example.androidprojetparkour.ParkourViewModel
 import com.example.androidprojetparkour.api.NetworkResponse
-import com.example.androidprojetparkour.api.models.Competitions
+import com.example.androidprojetparkour.api.models.competitions.Competitions
 import com.example.androidprojetparkour.router.Routes
+import com.example.androidprojetparkour.viewModel.CompetitionViewModel
 
 
 @Composable
 fun vueListCompetition(viewModels: ViewModelProvider, navController: NavHostController){
 
-    val viewModel = viewModels[ParkourViewModel::class.java]
-    val competitionsResult = viewModel.parkourResult.observeAsState()
+    val viewModel = viewModels[CompetitionViewModel::class.java]
+    val competitionsResult = viewModel.competitions.observeAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.getData()
+        viewModel.getCompetitions()
     }
     Column {
         when(val result = competitionsResult.value){
@@ -54,7 +54,7 @@ fun vueListCompetition(viewModels: ViewModelProvider, navController: NavHostCont
 }
 
 @Composable
-fun ParkourDetails(data: Competitions, navController: NavHostController){
+    fun ParkourDetails(data: Competitions, navController: NavHostController){
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxWidth(),
