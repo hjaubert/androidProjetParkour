@@ -20,7 +20,7 @@ fun Router(viewModel: ViewModelProvider) {
         composable(Routes.vueInfoCompetition+"/{data}"){
             val dataString = it.arguments?.getString("data")
             val data = dataString?.toInt() ?:-1
-            vueInfoCompetition(data)
+            vueInfoCompetition(viewModel,data)
         }
 
     })
