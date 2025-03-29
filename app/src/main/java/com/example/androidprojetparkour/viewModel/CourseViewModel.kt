@@ -8,6 +8,7 @@ import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.RetrofitInstance
 import com.example.androidprojetparkour.api.models.courses.Courses
 import com.example.androidprojetparkour.api.models.courses.CoursesItem
+import com.example.androidprojetparkour.api.models.obstacles.ObstaclesItem
 import kotlinx.coroutines.launch
 
 class CourseViewModel : ViewModel() {
@@ -25,6 +26,24 @@ class CourseViewModel : ViewModel() {
 
     private val _competitionCourses = MutableLiveData<NetworkResponse<Courses>>()
     val competitionCourses: LiveData<NetworkResponse<Courses>> = _competitionCourses
+
+    private val _createCourseResult = MutableLiveData<NetworkResponse<CoursesItem>>()
+    val createCourseResult: LiveData<NetworkResponse<CoursesItem>> = _createCourseResult
+
+    private val _updateCourseResult = MutableLiveData<NetworkResponse<CoursesItem>>()
+    val updateCourseResult: LiveData<NetworkResponse<CoursesItem>> = _updateCourseResult
+
+    private val _deleteCourseResult = MutableLiveData<NetworkResponse<Unit>>()
+    val deleteCourseResult: LiveData<NetworkResponse<Unit>> = _deleteCourseResult
+
+    private val _addObstacleResult = MutableLiveData<NetworkResponse<ObstaclesItem>>()
+    val addObstacleResult: LiveData<NetworkResponse<ObstaclesItem>> = _addObstacleResult
+
+    private val _removeObstacleResult = MutableLiveData<NetworkResponse<Unit>>()
+    val removeObstacleResult: LiveData<NetworkResponse<Unit>> = _removeObstacleResult
+
+    private val _updateObstaclePositionResult = MutableLiveData<NetworkResponse<ObstaclesItem>>()
+    val updateObstaclePositionResult: LiveData<NetworkResponse<ObstaclesItem>> = _updateObstaclePositionResult
 
     fun getCourses() {
         viewModelScope.launch {
@@ -94,6 +113,110 @@ class CourseViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 _competitionCourses.value = NetworkResponse.Error("Failed to load competition courses: ${e.message}")
+            }
+        }
+    }
+
+    fun createCourse(course: CoursesItem) {
+        viewModelScope.launch {
+            _createCourseResult.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.storeCourse(course)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _createCourseResult.value = NetworkResponse.Success(it)
+                    }
+                } else {
+                    _createCourseResult.value = NetworkResponse.Error("Failed to create course")
+                }
+            } catch (e: Exception) {
+                _createCourseResult.value = NetworkResponse.Error("Failed to create course: ${e.message}")
+            }
+        }
+    }
+
+    fun updateCourse(courseId: Int, course: CoursesItem) {
+        viewModelScope.launch {
+            _updateCourseResult.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.updateCourse(courseId, course)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _updateCourseResult.value = NetworkResponse.Success(it)
+                    }
+                } else {
+                    _updateCourseResult.value = NetworkResponse.Error("Failed to update course")
+                }
+            } catch (e: Exception) {
+                _updateCourseResult.value = NetworkResponse.Error("Failed to update course: ${e.message}")
+            }
+        }
+    }
+
+    fun deleteCourse(courseId: Int) {
+        viewModelScope.launch {
+            _deleteCourseResult.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.deleteCourse(courseId)
+                if (response.isSuccessful) {
+                    _deleteCourseResult.value = NetworkResponse.Success(Unit)
+                } else {
+                    _deleteCourseResult.value = NetworkResponse.Error("Failed to delete course")
+                }
+            } catch (e: Exception) {
+                _deleteCourseResult.value = NetworkResponse.Error("Failed to delete course: ${e.message}")
+            }
+        }
+    }
+
+    fun addObstacleToCourse(courseId: Int, obstacleId: Int) {
+        viewModelScope.launch {
+            _addObstacleResult.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.addObstacleToCourse(courseId, obstacleId)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _addObstacleResult.value = NetworkResponse.Success(it)
+                    }
+                } else {
+                    _addObstacleResult.value = NetworkResponse.Error("Failed to add obstacle to course")
+                }
+            } catch (e: Exception) {
+                _addObstacleResult.value = NetworkResponse.Error("Failed to add obstacle to course: ${e.message}")
+            }
+        }
+    }
+
+    fun removeObstacleFromCourse(courseId: Int, obstacleId: Int) {
+        viewModelScope.launch {
+            _removeObstacleResult.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.removeObstacleFromCourse(courseId, obstacleId)
+                if (response.isSuccessful) {
+                    _removeObstacleResult.value = NetworkResponse.Success(Unit)
+                } else {
+                    _removeObstacleResult.value = NetworkResponse.Error("Failed to remove obstacle from course")
+                }
+            } catch (e: Exception) {
+                _removeObstacleResult.value = NetworkResponse.Error("Failed to remove obstacle from course: ${e.message}")
+            }
+        }
+    }
+
+    fun updateObstaclePosition(courseId: Int, obstacleId: Int, position: Int) {
+        viewModelScope.launch {
+            _updateObstaclePositionResult.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.updateObstaclePosition(courseId, obstacleId, position)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _updateObstaclePositionResult.value = NetworkResponse.Success(it)
+                    }
+                } else {
+                    _updateObstaclePositionResult.value = NetworkResponse.Error("Failed to update obstacle position")
+                }
+                } catch (e: Exception) {
+                _updateObstaclePositionResult.value = NetworkResponse.Error("Failed to update obstacle position: ${e.message}")
             }
         }
     }

@@ -10,33 +10,39 @@ import com.example.androidprojetparkour.api.models.performancesObstacles.Perform
 import com.example.androidprojetparkour.api.models.performancesObstacles.PerformanceObstaclesItem
 import kotlinx.coroutines.launch
 
-class PerformanceObstacleViewModel: ViewModel() {
+class PerformanceObstacleViewModel : ViewModel() {
 
     private val parkourApi = RetrofitInstance.parkourApi
 
-    private val _performancesObstacle = MutableLiveData<NetworkResponse<PerformanceObstacles>>()
-    val performancesObstacle: LiveData<NetworkResponse<PerformanceObstacles>> = _performancesObstacle
+    private val _performanceObstacles = MutableLiveData<NetworkResponse<PerformanceObstacles>>()
+    val performanceObstacles: LiveData<NetworkResponse<PerformanceObstacles>> = _performanceObstacles
 
     private val _performanceObstacleDetails = MutableLiveData<NetworkResponse<PerformanceObstaclesItem>>()
     val performanceObstacleDetails: LiveData<NetworkResponse<PerformanceObstaclesItem>> = _performanceObstacleDetails
 
-    private val _performanceObstaclesByPerformance = MutableLiveData<NetworkResponse<PerformanceObstacles>>()
-    val performanceObstaclesByPerformance: LiveData<NetworkResponse<PerformanceObstacles>> = _performanceObstaclesByPerformance
+    private val _createPerformanceObstacleResult = MutableLiveData<NetworkResponse<PerformanceObstaclesItem>>()
+    val createPerformanceObstacleResult: LiveData<NetworkResponse<PerformanceObstaclesItem>> = _createPerformanceObstacleResult
 
-    fun getPerformancesObstacle() {
+    private val _updatePerformanceObstacleResult = MutableLiveData<NetworkResponse<PerformanceObstaclesItem>>()
+    val updatePerformanceObstacleResult: LiveData<NetworkResponse<PerformanceObstaclesItem>> = _updatePerformanceObstacleResult
+
+    private val _deletePerformanceObstacleResult = MutableLiveData<NetworkResponse<Unit>>()
+    val deletePerformanceObstacleResult: LiveData<NetworkResponse<Unit>> = _deletePerformanceObstacleResult
+
+    fun getPerformanceObstacles() {
         viewModelScope.launch {
-            _performancesObstacle.value = NetworkResponse.Loading
+            _performanceObstacles.value = NetworkResponse.Loading
             try {
                 val response = parkourApi.getPerformancesByObstacle()
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        _performancesObstacle.value = NetworkResponse.Success(it)
+                        _performanceObstacles.value = NetworkResponse.Success(it)
                     }
                 } else {
-                    _performancesObstacle.value = NetworkResponse.Error("Failed to load performances obstacles")
+                    _performanceObstacles.value = NetworkResponse.Error("Failed to load performance obstacles")
                 }
             } catch (e: Exception) {
-                _performancesObstacle.value = NetworkResponse.Error("Failed to load performances obstacles: ${e.message}")
+                _performanceObstacles.value = NetworkResponse.Error("Failed to load performance obstacles: ${e.message}")
             }
         }
     }
@@ -59,22 +65,39 @@ class PerformanceObstacleViewModel: ViewModel() {
         }
     }
 
-    fun getDetailsPerformance(performanceId: Int) {
+    fun createPerformanceObstacle(performanceObstacle: PerformanceObstaclesItem) {
         viewModelScope.launch {
-            _performanceObstaclesByPerformance.value = NetworkResponse.Loading
+            _createPerformanceObstacleResult.value = NetworkResponse.Loading
             try {
-                val response = parkourApi.getDetailsPerformance(performanceId)
+                val response = parkourApi.storePerformanceObstacle(performanceObstacle)
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        _performanceObstaclesByPerformance.value = NetworkResponse.Success(it)
+                        _createPerformanceObstacleResult.value = NetworkResponse.Success(it)
                     }
                 } else {
-                    _performanceObstaclesByPerformance.value = NetworkResponse.Error("Failed to load performance obstacles by performance")
+                    _createPerformanceObstacleResult.value = NetworkResponse.Error("Failed to create performance obstacle")
                 }
             } catch (e: Exception) {
-                _performanceObstaclesByPerformance.value = NetworkResponse.Error("Failed to load performance obstacles by performance: ${e.message}")
+                _createPerformanceObstacleResult.value = NetworkResponse.Error("Failed to create performance obstacle: ${e.message}")
             }
         }
     }
 
+    fun updatePerformanceObstacle(performanceObstacleId: Int, performanceObstacle: PerformanceObstaclesItem) {
+        viewModelScope.launch {
+            _updatePerformanceObstacleResult.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.updatePerformanceObstacle(performanceObstacleId, performanceObstacle)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _updatePerformanceObstacleResult.value = NetworkResponse.Success(it)
+                    }
+                } else {
+                    _updatePerformanceObstacleResult.value = NetworkResponse.Error("Failed to update performance obstacle")
+                }
+            } catch (e: Exception) {
+                _updatePerformanceObstacleResult.value = NetworkResponse.Error("Failed to update performance obstacle: ${e.message}")
+            }
+        }
+    }
 }

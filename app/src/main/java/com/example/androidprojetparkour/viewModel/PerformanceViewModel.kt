@@ -27,8 +27,14 @@ class PerformanceViewModel : ViewModel() {
     private val _coursePerformances = MutableLiveData<NetworkResponse<Performances>>()
     val coursePerformances: LiveData<NetworkResponse<Performances>> = _coursePerformances
 
-    private val _competitorPerformancesInCourse = MutableLiveData<NetworkResponse<CompetitorPerformance>>()
-    val competitorPerformancesInCourse: LiveData<NetworkResponse<CompetitorPerformance>> = _competitorPerformancesInCourse
+    private val _createPerformanceResult = MutableLiveData<NetworkResponse<PerformancesItem>>()
+    val createPerformanceResult: LiveData<NetworkResponse<PerformancesItem>> = _createPerformanceResult
+
+    private val _updatePerformanceResult = MutableLiveData<NetworkResponse<PerformancesItem>>()
+    val updatePerformanceResult: LiveData<NetworkResponse<PerformancesItem>> = _updatePerformanceResult
+
+    private val _deletePerformanceResult = MutableLiveData<NetworkResponse<Unit>>()
+    val deletePerformanceResult: LiveData<NetworkResponse<Unit>> = _deletePerformanceResult
 
     fun getCompetitorPerformances(competitorId: Int) {
         viewModelScope.launch {
@@ -102,22 +108,55 @@ class PerformanceViewModel : ViewModel() {
         }
     }
 
-    fun getCompetitorPerformancesInCourse(competitorId: Int, courseId: Int){
+    fun createPerformance(performance: PerformancesItem) {
         viewModelScope.launch {
-            _competitorPerformancesInCourse.value = NetworkResponse.Loading
+            _createPerformanceResult.value = NetworkResponse.Loading
             try {
-                val response = parkourApi.getCompetitorPerformancesInCourse(competitorId, courseId)
+                val response = parkourApi.storePerformance(performance)
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        _competitorPerformancesInCourse.value = NetworkResponse.Success(it)
+                        _createPerformanceResult.value = NetworkResponse.Success(it)
                     }
                 } else {
-                    _competitorPerformancesInCourse.value = NetworkResponse.Error("Failed to load competitor performances in course")
+                    _createPerformanceResult.value = NetworkResponse.Error("Failed to create performance")
                 }
             } catch (e: Exception) {
-                _competitorPerformancesInCourse.value = NetworkResponse.Error("Failed to load competitor performances in course: ${e.message}")
+                _createPerformanceResult.value = NetworkResponse.Error("Failed to create performance: ${e.message}")
             }
         }
     }
 
+    fun updatePerformance(performanceId: Int, performance: PerformancesItem) {
+        viewModelScope.launch {
+            _updatePerformanceResult.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.updatePerformance(performanceId, performance)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _updatePerformanceResult.value = NetworkResponse.Success(it)
+                    }
+                } else {
+                    _updatePerformanceResult.value = NetworkResponse.Error("Failed to update performance")
+                }
+            } catch (e: Exception) {
+                _updatePerformanceResult.value = NetworkResponse.Error("Failed to update performance: ${e.message}")
+            }
+        }
+    }
+
+    fun deletePerformance(performanceId: Int) {
+        viewModelScope.launch {
+            _deletePerformanceResult.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.deletePerformance(performanceId)
+                if (response.isSuccessful) {
+                    _deletePerformanceResult.value = NetworkResponse.Success(Unit)
+                } else {
+                    _deletePerformanceResult.value = NetworkResponse.Error("Failed to delete performance")
+                }
+            } catch (e: Exception) {
+                _deletePerformanceResult.value = NetworkResponse.Error("Failed to delete performance: ${e.message}")
+            }
+        }
+    }
 }

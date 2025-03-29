@@ -24,6 +24,15 @@ class ObstacleViewModel : ViewModel() {
     private val _courseObstacles = MutableLiveData<NetworkResponse<ObstaclesCourse>>()
     val courseObstacles: LiveData<NetworkResponse<ObstaclesCourse>> = _courseObstacles
 
+    private val _createObstacleResult = MutableLiveData<NetworkResponse<ObstaclesItem>>()
+    val createObstacleResult: LiveData<NetworkResponse<ObstaclesItem>> = _createObstacleResult
+
+    private val _updateObstacleResult = MutableLiveData<NetworkResponse<ObstaclesItem>>()
+    val updateObstacleResult: LiveData<NetworkResponse<ObstaclesItem>> = _updateObstacleResult
+
+    private val _deleteObstacleResult = MutableLiveData<NetworkResponse<Unit>>()
+    val deleteObstacleResult: LiveData<NetworkResponse<Unit>> = _deleteObstacleResult
+
     fun getObstacles() {
         viewModelScope.launch {
             _obstacles.value = NetworkResponse.Loading
@@ -74,6 +83,58 @@ class ObstacleViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 _courseObstacles.value = NetworkResponse.Error("Failed to load course obstacles: ${e.message}")
+            }
+        }
+    }
+
+    fun createObstacle(obstacle: ObstaclesItem) {
+        viewModelScope.launch {
+            _createObstacleResult.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.storeObstacle(obstacle)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _createObstacleResult.value = NetworkResponse.Success(it)
+                    }
+                } else {
+                    _createObstacleResult.value = NetworkResponse.Error("Failed to create obstacle")
+                }
+            } catch (e: Exception) {
+                _createObstacleResult.value = NetworkResponse.Error("Failed to create obstacle: ${e.message}")
+            }
+        }
+    }
+
+    fun updateObstacle(obstacleId: Int, obstacle: ObstaclesItem) {
+        viewModelScope.launch {
+            _updateObstacleResult.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.updateObstacle(obstacleId, obstacle)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _updateObstacleResult.value = NetworkResponse.Success(it)
+                    }
+                } else {
+                    _updateObstacleResult.value = NetworkResponse.Error("Failed to update obstacle")
+                }
+            } catch (e: Exception) {
+                _updateObstacleResult.value = NetworkResponse.Error("Failed to update obstacle: ${e.message}")
+            }
+        }
+    }
+
+    fun deleteObstacle(obstacleId: Int) {
+        viewModelScope.launch {
+            _deleteObstacleResult.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.deleteObstacle(obstacleId)
+                if (response.isSuccessful) {
+                    _deleteObstacleResult.value = NetworkResponse.Success(Unit)
+                } else {
+                    _deleteObstacleResult.value = NetworkResponse.Error("Failed to delete obstacle")
+                }
+            } catch (e: Exception) {
+                _deleteObstacleResult.value = NetworkResponse.Error("Failed to delete obstacle: ${e.message}")
             }
         }
     }
