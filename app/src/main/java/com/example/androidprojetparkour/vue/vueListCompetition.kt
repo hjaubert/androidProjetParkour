@@ -32,6 +32,8 @@ import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.models.competitions.Competitions
 import com.example.androidprojetparkour.viewModel.CompetitionViewModel
 import androidx.compose.ui.graphics.Color
+import com.example.androidprojetparkour.api.models.competitions.CompetitionsItem
+import com.example.androidprojetparkour.router.Routes
 
 
 @Composable
@@ -72,15 +74,16 @@ fun ParkourDetails(data: Competitions, navController: NavHostController){
             Spacer(modifier = Modifier.height(35.dp))
             Text("List of Competition", fontSize = 40.sp)
             Spacer(modifier = Modifier.height(25.dp))
-            affichageCompetiton(data)
+
+            affichageCompetiton(data,navController)
 
         }
 
         Button(
             onClick = { },
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black,  // Couleur de fond
-                contentColor = Color.White   // Couleur du texte
+                containerColor = Color.Black,
+                contentColor = Color.White
             ),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -92,7 +95,7 @@ fun ParkourDetails(data: Competitions, navController: NavHostController){
 }
 
 @Composable
-fun affichageCompetiton(data: Competitions) {
+fun affichageCompetiton(data: Competitions, navController: NavHostController) {
     LazyColumn {
         items(data.toList()) { competition ->
             var showNewButtons = remember { mutableStateOf(false) }
@@ -102,8 +105,6 @@ fun affichageCompetiton(data: Competitions) {
                 }else {
                     showNewButtons.value = false
                 }
-
-                //navController.navigate(Routes.vueInfoCompetition + "/" + competition.id)
             }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -138,7 +139,7 @@ fun affichageCompetiton(data: Competitions) {
                 }
             }
 
-            sousBouton(showNewButtons)
+            sousBouton(showNewButtons,navController,competition)
 
         }
     }
@@ -146,21 +147,25 @@ fun affichageCompetiton(data: Competitions) {
 
 
 @Composable
-fun sousBouton(showNewButtons: MutableState<Boolean>) {
+fun sousBouton(
+    showNewButtons: MutableState<Boolean>,
+    navController: NavHostController,
+    competition: CompetitionsItem
+) {
     if (showNewButtons.value) {
         Spacer(modifier = Modifier.height(20.dp))
         Button(
-            onClick = {},
+            onClick = {navController.navigate(Routes.vueListCompetitionsCompetitors + "/" + competition.id)},
             modifier = Modifier.fillMaxWidth().padding(15.dp)
         ) {
-            Text("New Button 1", fontSize = 20.sp)
+            Text("Competitors", fontSize = 20.sp)
         }
         Spacer(modifier = Modifier.height(10.dp))
         Button(
-            onClick = {},
+            onClick = {navController.navigate(Routes.vueListCompetitionsParkours + "/" + competition.id)},
             modifier = Modifier.fillMaxWidth().padding(15.dp)
         ) {
-            Text("New Button 2", fontSize = 20.sp)
+            Text("Parkours", fontSize = 20.sp)
         }
     }
 }
