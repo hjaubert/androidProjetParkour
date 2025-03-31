@@ -18,6 +18,9 @@ class CompetitionViewModel : ViewModel() {
     private val _competitions = MutableLiveData<NetworkResponse<Competitions>>()
     val competitions: LiveData<NetworkResponse<Competitions>> = _competitions
 
+    private val _oneCompetition = MutableLiveData<NetworkResponse<CompetitionsItem>>()
+    val oneCompetition: LiveData<NetworkResponse<CompetitionsItem>> = _oneCompetition
+
     private val _competitionDetails = MutableLiveData<NetworkResponse<CompetitionsItem>>()
     val competitionDetails: LiveData<NetworkResponse<CompetitionsItem>> = _competitionDetails
 
@@ -50,6 +53,24 @@ class CompetitionViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 _competitions.value = NetworkResponse.Error("Failed to load competitions: ${e.message}")
+            }
+        }
+    }
+
+    fun getOneCompetition(competitionId: Int) {
+        viewModelScope.launch {
+            _oneCompetition.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.getOneCompetition(competitionId)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _oneCompetition.value = NetworkResponse.Success(it)
+                    }
+                } else {
+                    _oneCompetition.value = NetworkResponse.Error("Failed to load competitions")
+                }
+            } catch (e: Exception) {
+                _oneCompetition.value = NetworkResponse.Error("Failed to load competitions: ${e.message}")
             }
         }
     }
