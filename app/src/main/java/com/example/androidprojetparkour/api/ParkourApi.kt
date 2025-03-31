@@ -71,6 +71,9 @@ interface ParkourApi {
     @GET("courses/{id}")
     suspend fun getDetailsCourse(@Path("id") courseId: Int): Response<CoursesItem>
 
+    @GET("courses/{id}/unused_obstacles")
+    suspend fun getUnusedObstacle(@Path("id") courseId: Int): Response<Obstacles>
+
     //-----------------------------Obstacles---------------------------------------------
     @GET("obstacles")
     suspend fun getObstacles(): Response<Obstacles>
