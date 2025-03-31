@@ -8,6 +8,7 @@ import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.RetrofitInstance
 import com.example.androidprojetparkour.api.models.competitions.Competitions
 import com.example.androidprojetparkour.api.models.competitions.CompetitionsItem
+import com.example.androidprojetparkour.api.models.competitors.Competitors
 import com.example.androidprojetparkour.api.models.competitors.CompetitorsItem
 import kotlinx.coroutines.launch
 
@@ -20,6 +21,9 @@ class CompetitionViewModel : ViewModel() {
 
     private val _competitionDetails = MutableLiveData<NetworkResponse<CompetitionsItem>>()
     val competitionDetails: LiveData<NetworkResponse<CompetitionsItem>> = _competitionDetails
+
+    private val _registeredCompetitorsInCompetition = MutableLiveData<NetworkResponse<Competitors>>()
+    val registeredCompetitorsInCompetition: LiveData<NetworkResponse<Competitors>> = _registeredCompetitorsInCompetition
 
     private val _createCompetitionResult = MutableLiveData<NetworkResponse<CompetitionsItem>>()
     val createCompetitionResult: LiveData<NetworkResponse<CompetitionsItem>> = _createCompetitionResult
@@ -68,6 +72,24 @@ class CompetitionViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 _competitionDetails.value = NetworkResponse.Error("Failed to load competition details: ${e.message}")
+            }
+        }
+    }
+
+    fun getRegisteredCompetitorsInCompetition(competitionId: Int) {
+        viewModelScope.launch {
+            _registeredCompetitorsInCompetition.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.getRegisteredCompetitorsInCompetition(competitionId)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _registeredCompetitorsInCompetition.value = NetworkResponse.Success(it)
+                    }
+                } else {
+                    _registeredCompetitorsInCompetition.value = NetworkResponse.Error("Failed to load competition details")
+                }
+            } catch (e: Exception) {
+                _registeredCompetitorsInCompetition.value = NetworkResponse.Error("Failed to load competition details: ${e.message}")
             }
         }
     }
