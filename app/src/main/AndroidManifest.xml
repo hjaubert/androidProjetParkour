@@ -16,6 +16,11 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".vue.vueListObstacles"
+            android:exported="false"
+            android:label="@string/title_activity_vue_list_obstacles"
+            android:theme="@style/Theme.AndroidProjetParkour" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
