@@ -26,6 +26,7 @@ import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.api.NetworkResponse
 import androidx.compose.ui.graphics.Color
 import com.example.androidprojetparkour.api.models.obstacles.Obstacles
+import com.example.androidprojetparkour.router.Routes
 import com.example.androidprojetparkour.viewModel.CourseViewModel
 
 
@@ -47,7 +48,7 @@ fun vueListObstaclesDisponible(viewModel: ViewModelProvider, data: Int, navContr
                 CircularProgressIndicator()
             }
             is NetworkResponse.Success -> {
-                listObstacle(data = result.data,navController)
+                listObstacle(data = result.data,navController,data)
             }
             null -> {}
         }
@@ -56,7 +57,7 @@ fun vueListObstaclesDisponible(viewModel: ViewModelProvider, data: Int, navContr
 }
 
 @Composable
-fun listObstacle(data: Obstacles, navController: NavHostController){
+fun listObstacle(data: Obstacles, navController: NavHostController, data1: Int){
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -92,7 +93,7 @@ fun listObstacle(data: Obstacles, navController: NavHostController){
 
         Button(
             onClick = {
-
+                navController.navigate(Routes.vueNewObstacle+"/"+data1)
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,  // Couleur de fond
@@ -102,7 +103,7 @@ fun listObstacle(data: Obstacles, navController: NavHostController){
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
         ) {
-            Text("add", fontSize = 25.sp)
+            Text("New", fontSize = 25.sp)
         }
     }
 }
