@@ -55,10 +55,12 @@ fun Router(viewModel: ViewModelProvider) {
             vueArbitrage(viewModel,data)
         }
 
-        composable(Routes.vueListConcurents +"/{data}"){
+        composable(Routes.vueListConcurents +"/{data}/{idCompetition}"){
             val dataString = it.arguments?.getString("data")
             val data = dataString?.toInt() ?:-1
-            vueListConcurents(viewModel,data,navController)
+            val dataStringCompet = it.arguments?.getString("idCompetition")
+            val dataId = dataStringCompet?.toInt() ?:-1
+            vueListConcurents(viewModel,data,navController,dataId)
         }
 
 
