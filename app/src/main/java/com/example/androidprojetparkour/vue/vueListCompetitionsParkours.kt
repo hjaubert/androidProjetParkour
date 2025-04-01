@@ -3,7 +3,6 @@ package com.example.androidprojetparkour.vue
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,8 +25,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.api.NetworkResponse
-import com.example.androidprojetparkour.api.models.competitors.Competitors
 import com.example.androidprojetparkour.api.models.courses.Courses
+import com.example.androidprojetparkour.router.Routes
 import com.example.androidprojetparkour.viewModel.CourseViewModel
 
 @Composable
@@ -51,7 +50,7 @@ fun vueListCompetitionsParkours(
                 CircularProgressIndicator()
             }
             is NetworkResponse.Success -> {
-                listParkour(data = result.data,navController)
+                listParkour(data = result.data,navController,competition)
             }
             null -> {}
         }
@@ -60,7 +59,7 @@ fun vueListCompetitionsParkours(
 }
 
 @Composable
-fun listParkour(data: Courses, navController: NavHostController) {
+fun listParkour(data: Courses, navController: NavHostController, competition: Int) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -76,7 +75,7 @@ fun listParkour(data: Courses, navController: NavHostController) {
         }
 
         Button(
-            onClick = { },
+            onClick = { navController.navigate(Routes.vueNewParkour + "/" + competition) },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
                 contentColor = Color.White
