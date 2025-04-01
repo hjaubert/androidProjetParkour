@@ -28,7 +28,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.models.competitors.Competitors
-import com.example.androidprojetparkour.api.models.competitors.CompetitorsItem
 import com.example.androidprojetparkour.router.Routes
 import com.example.androidprojetparkour.viewModel.CompetitionViewModel
 

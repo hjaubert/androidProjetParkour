@@ -1,6 +1,5 @@
 package com.example.androidprojetparkour.vue
 
-
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +33,7 @@ import com.example.androidprojetparkour.api.models.competitors.Competitors
 import com.example.androidprojetparkour.api.models.competitors.CompetitorsItem
 import com.example.androidprojetparkour.router.Routes
 import com.example.androidprojetparkour.viewModel.CompetitionViewModel
+import com.example.androidprojetparkour.viewModel.CompetitorViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -46,15 +46,17 @@ fun vueListCompetitionsCompetitorsAdd(
 ){
 
     val viewModelCompetitions = viewModel[CompetitionViewModel::class.java]
+    val viewModelCompetitiors = viewModel[CompetitorViewModel::class.java]
 
     val competitionsResult = viewModelCompetitions.competitions.observeAsState()
     val competitorsRegisteredResult = viewModelCompetitions.registeredCompetitorsInCompetition.observeAsState()
-
+    val competitorsResult = viewModelCompetitiors.competitors.observeAsState()
 
 
     LaunchedEffect(Unit) {
-        viewModelCompetitions.getCompetitions()
+        viewModelCompetitions.getOneCompetition(competition)
         viewModelCompetitions.getRegisteredCompetitorsInCompetition(competition)
+        viewModelCompetitiors.getCompetitors()
     }
     Column {
         when(val resultCompetition = competitionsResult.value){
@@ -73,8 +75,19 @@ fun vueListCompetitionsCompetitorsAdd(
                         CircularProgressIndicator()
                     }
                     is NetworkResponse.Success -> {
-                        val competitorsValide = listCompetitiorsValide(resultCompetition.data,resultCompetitorRegister.data)
-                        listCompetitorsAdd(competitorsValide,navController,competition)
+                        when(val competitorsResult = competitorsResult.value){
+                            is NetworkResponse.Error -> {
+                                Text(text = competitorsResult.message)
+                            }
+                            NetworkResponse.Loading -> {
+                                CircularProgressIndicator()
+                            }
+                            is NetworkResponse.Success -> {
+                                val competitorsValide = listCompetitiorsValide(resultCompetition.data,resultCompetitorRegister.data,competitorsResult.data)
+                                listCompetitorsAdd(competitorsValide,navController,competition)
+                            }
+                            null -> {}
+                        }
                     }
                     null -> {}
                 }
@@ -87,12 +100,15 @@ fun vueListCompetitionsCompetitorsAdd(
 
 
 @Composable
-fun listCompetitiorsValide(data: Competitions, data1: Competitors): List<CompetitorsItem> {
+fun listCompetitiorsValide(theCompetition: Competitions, CompetitorsInCompetition: Competitors, AllCompetitors: Competitors): List<CompetitorsItem> {
+    Log.d("",theCompetition.toString())
+    Log.d("",CompetitorsInCompetition.toString())
+    Log.d("",AllCompetitors.toString())
     val competitoesValide = mutableListOf<CompetitorsItem>()
-    for (competitor in data1){
-        if (competitor.gender == data[0].gender && calculateAge(competitor.born_at) >= data[0].age_min && calculateAge(competitor.born_at) <= data[0].age_max ){
+    for (competitorAssume in AllCompetitors){
+        if (competitorAssume.gender == theCompetition[0].gender && calculateAge(competitorAssume.born_at) >= theCompetition[0].age_min && calculateAge(competitorAssume.born_at) <= theCompetition[0].age_max && !CompetitorsInCompetition.contains(competitorAssume)){
 
-            competitoesValide.add(competitor)
+            competitoesValide.add(competitorAssume)
         }
     }
     return competitoesValide.toList()
