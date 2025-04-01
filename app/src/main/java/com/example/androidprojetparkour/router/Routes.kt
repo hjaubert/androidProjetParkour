@@ -5,5 +5,6 @@ object Routes {
     var vueListObstacles = "vueListObstacles"
     var vueListCompetitionsParkours = "vueListCompetitionsParkours"
     var vueListCompetitionsCompetitors = "vueListCompetitionsCompetitors"
+    var vueListCompetitionsCompetitorsAdd = "vueListCompetitionsCompetitorsAdd"
     var vueNewCompetition = "vueNewCompetition"
 }
