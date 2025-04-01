@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">androidProjetParkour</string>
-    <string name="title_activity_new_competition">NewCompetition</string>
+    <string name="title_activity_list_competition">listCompetition</string>
 </resources>
