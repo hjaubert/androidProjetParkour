@@ -20,6 +20,9 @@ class PerformanceObstacleViewModel : ViewModel() {
     private val _performanceObstacleDetails = MutableLiveData<NetworkResponse<PerformanceObstaclesItem>>()
     val performanceObstacleDetails: LiveData<NetworkResponse<PerformanceObstaclesItem>> = _performanceObstacleDetails
 
+    private val _performanceDetails = MutableLiveData<NetworkResponse<PerformanceObstacles>>()
+    val performancesDetails: LiveData<NetworkResponse<PerformanceObstacles>> = _performanceDetails
+
     private val _createPerformanceObstacleResult = MutableLiveData<NetworkResponse<PerformanceObstaclesItem>>()
     val createPerformanceObstacleResult: LiveData<NetworkResponse<PerformanceObstaclesItem>> = _createPerformanceObstacleResult
 
@@ -61,6 +64,24 @@ class PerformanceObstacleViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 _performanceObstacleDetails.value = NetworkResponse.Error("Failed to load performance obstacle details: ${e.message}")
+            }
+        }
+    }
+
+    fun getPerformanceDetails(performanceId: Int) {
+        viewModelScope.launch {
+            _performanceDetails.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.getDetailsPerformance(performanceId)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _performanceDetails.value = NetworkResponse.Success(it)
+                    }
+                } else {
+                    _performanceDetails.value = NetworkResponse.Error("Failed to load performance obstacle details")
+                }
+            } catch (e: Exception) {
+                _performanceDetails.value = NetworkResponse.Error("Failed to load performance obstacle details: ${e.message}")
             }
         }
     }
