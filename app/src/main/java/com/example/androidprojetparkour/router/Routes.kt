@@ -8,4 +8,5 @@ object Routes {
     var vueNewCompetition = "vueNewCompetition"
     var vueNewParkour = "vueNewParkour"
     var vueArbitrage = "vueArbitrage"
+    var vueListConcurents = "vueListConcurents"
 }
