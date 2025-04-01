@@ -7,6 +7,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.androidprojetparkour.vue.vueInfoCompetition
 import com.example.androidprojetparkour.vue.vueListCompetition
+import com.example.androidprojetparkour.vue.vueListCompetitionsCompetitors
+import com.example.androidprojetparkour.vue.vueListCompetitionsParkours
 
 @Composable
 fun Router(viewModel: ViewModelProvider) {
@@ -17,10 +19,15 @@ fun Router(viewModel: ViewModelProvider) {
         composable(Routes.vueListCompetitions){
             vueListCompetition(viewModel,navController)
         }
-        composable(Routes.vueInfoCompetition+"/{data}"){
+        composable(Routes.vueListCompetitionsParkours +"/{data}"){
             val dataString = it.arguments?.getString("data")
             val data = dataString?.toInt() ?:-1
-            vueInfoCompetition(viewModel,data)
+            vueListCompetitionsParkours(viewModel,data)
+        }
+        composable(Routes.vueListCompetitionsCompetitors +"/{data}"){
+            val dataString = it.arguments?.getString("data")
+            val data = dataString?.toInt() ?:-1
+            vueListCompetitionsCompetitors(viewModel,data)
         }
 
     })
