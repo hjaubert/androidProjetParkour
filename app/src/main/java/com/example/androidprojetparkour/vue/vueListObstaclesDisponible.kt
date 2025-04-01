@@ -25,18 +25,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.api.NetworkResponse
 import androidx.compose.ui.graphics.Color
-import com.example.androidprojetparkour.api.models.obstacles.ObstaclesCourse
-import com.example.androidprojetparkour.router.Routes
-import com.example.androidprojetparkour.viewModel.ObstacleViewModel
+import com.example.androidprojetparkour.api.models.obstacles.Obstacles
+import com.example.androidprojetparkour.viewModel.CourseViewModel
 
 
 @Composable
-fun vueListObstales(viewModel: ViewModelProvider, data: Int, navController: NavHostController){
-    val viewModelObstacle = viewModel[ObstacleViewModel::class.java]
-    val obstacleResult = viewModelObstacle.courseObstacles.observeAsState()
+fun vueListObstaclesDisponible(viewModel: ViewModelProvider, data: Int, navController: NavHostController){
+    val viewModelObstacleDisponible = viewModel[CourseViewModel::class.java]
+    val obstacleResult = viewModelObstacleDisponible.unusedObstacles.observeAsState()
 
     LaunchedEffect(Unit) {
-        viewModelObstacle.getCourseObstacles(data)
+        viewModelObstacleDisponible.getUnusedObstacles(data)
     }
 
     Column {
@@ -48,7 +47,7 @@ fun vueListObstales(viewModel: ViewModelProvider, data: Int, navController: NavH
                 CircularProgressIndicator()
             }
             is NetworkResponse.Success -> {
-                listObstacleDisponible(data = result.data,navController, data)
+                listObstacle(data = result.data,navController)
             }
             null -> {}
         }
@@ -57,7 +56,7 @@ fun vueListObstales(viewModel: ViewModelProvider, data: Int, navController: NavH
 }
 
 @Composable
-fun listObstacleDisponible(data: ObstaclesCourse, navController: NavHostController, data1: Int){
+fun listObstacle(data: Obstacles, navController: NavHostController){
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -76,11 +75,11 @@ fun listObstacleDisponible(data: ObstaclesCourse, navController: NavHostControll
             LazyColumn {
                 items(data.toList()) {obstacle ->
                     Button({
-
+                        //navController.navigate(Routes.vueInfoCompetition+"/"+obstacle.id)
                     }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
                         Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center){
                             Text(
-                                text = obstacle.obstacle_name,
+                                text = obstacle.name,
                                 fontSize = 30.sp
                             )
 
@@ -93,7 +92,7 @@ fun listObstacleDisponible(data: ObstaclesCourse, navController: NavHostControll
 
         Button(
             onClick = {
-                navController.navigate(Routes.vueListObstaclesDisponible+"/"+data1)
+
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,  // Couleur de fond

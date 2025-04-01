@@ -9,6 +9,7 @@ import com.example.androidprojetparkour.vue.vueListCompetition
 import com.example.androidprojetparkour.vue.vueListCompetitionsCompetitors
 import com.example.androidprojetparkour.vue.vueListCompetitionsCompetitorsAdd
 import com.example.androidprojetparkour.vue.vueListCompetitionsParkours
+import com.example.androidprojetparkour.vue.vueListObstaclesDisponible
 import com.example.androidprojetparkour.vue.vueListObstales
 import com.example.androidprojetparkour.vue.vueNewCompetition
 
@@ -44,6 +45,11 @@ fun Router(viewModel: ViewModelProvider) {
             val dataString = it.arguments?.getString("data")
             val data = dataString?.toInt() ?:-1
             vueListObstales(viewModel,data,navController)
+        }
+        composable(Routes.vueListObstaclesDisponible +"/{data}"){
+            val dataString = it.arguments?.getString("data")
+            val data = dataString?.toInt() ?:-1
+            vueListObstaclesDisponible(viewModel,data,navController)
         }
 
     })
