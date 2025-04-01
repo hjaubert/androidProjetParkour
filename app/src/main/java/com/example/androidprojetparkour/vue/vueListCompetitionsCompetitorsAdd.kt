@@ -1,5 +1,7 @@
 package com.example.androidprojetparkour.vue
 
+
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,34 +29,55 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.api.NetworkResponse
+import com.example.androidprojetparkour.api.models.competitions.Competitions
 import com.example.androidprojetparkour.api.models.competitors.Competitors
 import com.example.androidprojetparkour.api.models.competitors.CompetitorsItem
 import com.example.androidprojetparkour.router.Routes
 import com.example.androidprojetparkour.viewModel.CompetitionViewModel
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @Composable
-fun vueListCompetitionsCompetitors(
+fun vueListCompetitionsCompetitorsAdd(
     viewModel: ViewModelProvider,
     competition: Int,
     navController: NavHostController
 ){
 
     val viewModelCompetitions = viewModel[CompetitionViewModel::class.java]
-    val competitionsResult = viewModelCompetitions.registeredCompetitorsInCompetition.observeAsState()
+
+    val competitionsResult = viewModelCompetitions.competitions.observeAsState()
+    val competitorsRegisteredResult = viewModelCompetitions.registeredCompetitorsInCompetition.observeAsState()
+
+
 
     LaunchedEffect(Unit) {
+        viewModelCompetitions.getCompetitions()
         viewModelCompetitions.getRegisteredCompetitorsInCompetition(competition)
     }
     Column {
-        when(val result = competitionsResult.value){
+        when(val resultCompetition = competitionsResult.value){
             is NetworkResponse.Error -> {
-                Text(text = result.message)
+                Text(text = resultCompetition.message)
             }
             NetworkResponse.Loading -> {
                 CircularProgressIndicator()
             }
             is NetworkResponse.Success -> {
-                listCompetitors(data = result.data,navController,competition)
+                when(val resultCompetitorRegister = competitorsRegisteredResult.value){
+                    is NetworkResponse.Error -> {
+                        Text(text = resultCompetitorRegister.message)
+                    }
+                    NetworkResponse.Loading -> {
+                        CircularProgressIndicator()
+                    }
+                    is NetworkResponse.Success -> {
+                        val competitorsValide = listCompetitiorsValide(resultCompetition.data,resultCompetitorRegister.data)
+                        listCompetitorsAdd(competitorsValide,navController,competition)
+                    }
+                    null -> {}
+                }
             }
             null -> {}
         }
@@ -62,8 +85,38 @@ fun vueListCompetitionsCompetitors(
     }
 }
 
+
 @Composable
-fun listCompetitors(data: Competitors, navController: NavHostController, competition: Int) {
+fun listCompetitiorsValide(data: Competitions, data1: Competitors): List<CompetitorsItem> {
+    val competitoesValide = mutableListOf<CompetitorsItem>()
+    for (competitor in data1){
+        if (competitor.gender == data[0].gender && calculateAge(competitor.born_at) >= data[0].age_min && calculateAge(competitor.born_at) <= data[0].age_max ){
+
+            competitoesValide.add(competitor)
+        }
+    }
+    return competitoesValide.toList()
+}
+
+
+fun calculateAge(birthDate: String): Int {
+    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val birthDateObj = sdf.parse(birthDate) ?: return -1
+
+    val birthCalendar = Calendar.getInstance().apply { time = birthDateObj }
+    val todayCalendar = Calendar.getInstance()
+
+    var age = todayCalendar.get(Calendar.YEAR) - birthCalendar.get(Calendar.YEAR)
+
+    if (todayCalendar.get(Calendar.DAY_OF_YEAR) < birthCalendar.get(Calendar.DAY_OF_YEAR)) {
+        age-- // Ajuste si l'anniversaire n'est pas encore passé cette année
+    }
+
+    return age
+}
+
+@Composable
+fun listCompetitorsAdd(data: List<CompetitorsItem>, navController: NavHostController, competition: Int) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -74,12 +127,12 @@ fun listCompetitors(data: Competitors, navController: NavHostController, competi
             Text("List of Competitors", fontSize = 40.sp)
             Spacer(modifier = Modifier.height(25.dp))
 
-            affichageListCompetitor(data,navController)
+            affichageListCompetitorAdd(data,navController)
 
         }
 
         Button(
-            onClick = { navController.navigate(Routes.vueListCompetitionsCompetitorsAdd+"/"+ competition) },
+            onClick = { navController.navigate(Routes.vueListCompetitionsCompetitorsAdd+"/"+competition) },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
                 contentColor = Color.White
@@ -88,13 +141,13 @@ fun listCompetitors(data: Competitors, navController: NavHostController, competi
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
         ) {
-            Text("Add", fontSize = 25.sp)
+            Text("New", fontSize = 25.sp)
         }
     }
 }
 
 @Composable
-fun affichageListCompetitor(data: Competitors, navController: NavHostController) {
+fun affichageListCompetitorAdd(data: List<CompetitorsItem>, navController: NavHostController) {
     LazyColumn {
         items(data.toList()) { competitors ->
             Button({ }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
