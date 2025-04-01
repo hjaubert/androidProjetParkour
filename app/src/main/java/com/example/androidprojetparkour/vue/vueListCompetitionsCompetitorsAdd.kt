@@ -132,7 +132,11 @@ fun calculateAge(birthDate: String): Int {
 }
 
 @Composable
-fun listCompetitorsAdd(data: List<CompetitorsItem>, navController: NavHostController, competition: Int) {
+fun listCompetitorsAdd(
+    data: List<CompetitorsItem>,
+    navController: NavHostController,
+    competition: Int,
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -148,7 +152,7 @@ fun listCompetitorsAdd(data: List<CompetitorsItem>, navController: NavHostContro
         }
 
         Button(
-            onClick = { navController.navigate(Routes.vueListCompetitionsCompetitorsAdd+"/"+competition) },
+            onClick = { navController.navigate(Routes.vueNewCompetitors+"/"+competition) },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
                 contentColor = Color.White
