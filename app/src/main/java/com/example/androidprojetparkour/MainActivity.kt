@@ -143,7 +143,8 @@ class MainActivity : ComponentActivity() {
                     }
                     time = 0
                     if(isRunning){
-                        Log.d("Temps", tempsObstacle.toString())
+                        //Log.d("Temps", tempsObstacle.toString())
+                        //Ajout temps dans la bdd
                         setNumObstacle(numObstacle + 1)
                     }
                     isRunning = false
