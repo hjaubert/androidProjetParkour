@@ -27,6 +27,9 @@ class PerformanceViewModel : ViewModel() {
     private val _coursePerformances = MutableLiveData<NetworkResponse<Performances>>()
     val coursePerformances: LiveData<NetworkResponse<Performances>> = _coursePerformances
 
+    private val _competitorPerformancesInCourse = MutableLiveData<NetworkResponse<CompetitorPerformance>>()
+    val competitorPerformancesInCourse: LiveData<NetworkResponse<CompetitorPerformance>> = _competitorPerformancesInCourse
+
     private val _createPerformanceResult = MutableLiveData<NetworkResponse<PerformancesItem>>()
     val createPerformanceResult: LiveData<NetworkResponse<PerformancesItem>> = _createPerformanceResult
 
@@ -86,6 +89,24 @@ class PerformanceViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 _performanceDetails.value = NetworkResponse.Error("Failed to load performance details: ${e.message}")
+            }
+        }
+    }
+
+    fun getCompetitorPerformancesInCourse(competitorId: Int, courseId: Int) {
+        viewModelScope.launch {
+            _competitorPerformancesInCourse.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.getCompetitorPerformancesInCourse(competitorId, courseId)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _competitorPerformancesInCourse.value = NetworkResponse.Success(it)
+                    }
+                } else {
+                    _competitorPerformancesInCourse.value = NetworkResponse.Error("Failed to load course performances")
+                }
+            } catch (e: Exception) {
+                _competitorPerformancesInCourse.value = NetworkResponse.Error("Failed to load course performances: ${e.message}")
             }
         }
     }

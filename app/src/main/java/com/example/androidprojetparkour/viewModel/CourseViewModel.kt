@@ -8,6 +8,7 @@ import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.RetrofitInstance
 import com.example.androidprojetparkour.api.models.courses.Courses
 import com.example.androidprojetparkour.api.models.courses.CoursesItem
+import com.example.androidprojetparkour.api.models.obstacles.Obstacles
 import com.example.androidprojetparkour.api.models.obstacles.ObstaclesItem
 import kotlinx.coroutines.launch
 
@@ -26,6 +27,9 @@ class CourseViewModel : ViewModel() {
 
     private val _competitionCourses = MutableLiveData<NetworkResponse<Courses>>()
     val competitionCourses: LiveData<NetworkResponse<Courses>> = _competitionCourses
+
+    private val _unusedObstacles = MutableLiveData<NetworkResponse<Obstacles>>()
+    val unusedObstacles: LiveData<NetworkResponse<Obstacles>> = _unusedObstacles
 
     private val _createCourseResult = MutableLiveData<NetworkResponse<CoursesItem>>()
     val createCourseResult: LiveData<NetworkResponse<CoursesItem>> = _createCourseResult
@@ -113,6 +117,24 @@ class CourseViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 _competitionCourses.value = NetworkResponse.Error("Failed to load competition courses: ${e.message}")
+            }
+        }
+    }
+
+    fun getUnusedObstacles(courseId: Int) {
+        viewModelScope.launch {
+            _unusedObstacles.value = NetworkResponse.Loading
+            try {
+                val response = parkourApi.getUnusedObstacle(courseId)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _unusedObstacles.value = NetworkResponse.Success(it)
+                    }
+                } else {
+                    _unusedObstacles.value = NetworkResponse.Error("Failed to load competition courses")
+                }
+            } catch (e: Exception) {
+                _unusedObstacles.value = NetworkResponse.Error("Failed to load competition courses: ${e.message}")
             }
         }
     }
