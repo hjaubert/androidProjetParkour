@@ -17,7 +17,7 @@ fun Router(viewModel: ViewModelProvider) {
 
     val navController = rememberNavController()
 
-    NavHost(navController =  navController, startDestination = Routes.vueListObstacles, builder = {
+    NavHost(navController =  navController, startDestination = Routes.vueListCompetitions, builder = {
         composable(Routes.vueNewCompetition){
             vueNewCompetition(viewModel,navController)
         }
@@ -40,8 +40,10 @@ fun Router(viewModel: ViewModelProvider) {
             val data = dataString?.toInt() ?:-1
             vueListCompetitionsCompetitorsAdd(viewModel,data,navController)
         }
-        composable(Routes.vueListObstacles){
-            vueListObstales(viewModel,navController)
+        composable(Routes.vueListObstacles +"/{data}"){
+            val dataString = it.arguments?.getString("data")
+            val data = dataString?.toInt() ?:-1
+            vueListObstales(viewModel,data,navController)
         }
 
     })

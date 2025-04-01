@@ -28,6 +28,7 @@ import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.models.competitors.Competitors
 import com.example.androidprojetparkour.api.models.courses.Courses
+import com.example.androidprojetparkour.router.Routes
 import com.example.androidprojetparkour.viewModel.CourseViewModel
 
 @Composable
@@ -76,7 +77,8 @@ fun listParkour(data: Courses, navController: NavHostController) {
         }
 
         Button(
-            onClick = { },
+            onClick = {
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
                 contentColor = Color.White
@@ -94,7 +96,7 @@ fun listParkour(data: Courses, navController: NavHostController) {
 fun affichageListParkours(data: Courses, navController: NavHostController) {
     LazyColumn {
         items(data.toList()) { course ->
-            Button({ }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
+            Button(onClick = {navController.navigate(Routes.vueListObstacles+"/"+course.id)}, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
