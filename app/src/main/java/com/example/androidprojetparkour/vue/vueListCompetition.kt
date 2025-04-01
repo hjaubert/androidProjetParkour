@@ -80,7 +80,9 @@ fun ParkourDetails(data: Competitions, navController: NavHostController){
         }
 
         Button(
-            onClick = { },
+            onClick = {
+                navController.navigate(Routes.vueNewCompetition)
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
                 contentColor = Color.White

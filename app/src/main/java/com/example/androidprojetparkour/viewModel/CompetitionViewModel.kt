@@ -1,5 +1,6 @@
 package com.example.androidprojetparkour.viewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -118,13 +119,17 @@ class CompetitionViewModel : ViewModel() {
     fun createCompetition(competition: CompetitionsItem) {
         viewModelScope.launch {
             _createCompetitionResult.value = NetworkResponse.Loading
+            Log.d("Loading", "En chargement")
             try {
                 val response = parkourApi.storeCompetition(competition)
+                Log.d("resultat" , competition.toString())
                 if (response.isSuccessful) {
+                    Log.d("Reussite", "Reussi")
                     response.body()?.let {
                         _createCompetitionResult.value = NetworkResponse.Success(it)
                     }
                 } else {
+                    Log.d("ERREUR", "CA MARCHE PAS")
                     _createCompetitionResult.value = NetworkResponse.Error("Failed to create competition")
                 }
             } catch (e: Exception) {
