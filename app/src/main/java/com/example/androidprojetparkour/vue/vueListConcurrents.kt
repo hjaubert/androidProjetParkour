@@ -70,7 +70,7 @@ fun ListConcurent(data: Competitors, navController: NavHostController, competiti
 
             ) {
             Spacer(modifier = Modifier.height(35.dp))
-            Text("List of Comcurrents !", fontSize = 40.sp)
+            Text("List of Concurrents", fontSize = 40.sp)
             Spacer(modifier = Modifier.height(25.dp))
 
             affichageListConcurent(data,navController, idCourse)
