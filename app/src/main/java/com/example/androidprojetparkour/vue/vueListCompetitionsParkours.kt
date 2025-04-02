@@ -93,7 +93,7 @@ fun listParkour(data: Courses, navController: NavHostController, competition: In
 fun affichageListParkours(data: Courses, navController: NavHostController, competition: Int) {
     LazyColumn {
         items(data.toList()) { course ->
-            Button({ navController.navigate(Routes.vueListConcurents+"/"+course.id + "/" + competition) }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
+            Button({ navController.navigate(Routes.vueListConcurents+"/" + course.id + "/" + competition) }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center

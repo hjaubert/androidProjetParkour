@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,15 +20,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.api.NetworkResponse
+import com.example.androidprojetparkour.api.models.competitors.Competitors
 import com.example.androidprojetparkour.router.Routes
 import com.example.androidprojetparkour.viewModel.CompetitionViewModel
-import com.example.androidprojetparkour.api.models.competitors.Competitors as Competitors1
 
 @Composable
 fun vueListConcurents(
@@ -53,7 +51,7 @@ fun vueListConcurents(
                 CircularProgressIndicator()
             }
             is NetworkResponse.Success -> {
-                ListConcurent(data = result.data,navController,dataId)
+                ListConcurent(data = result.data,navController,dataId, data)
             }
             null -> {}
         }
@@ -62,7 +60,7 @@ fun vueListConcurents(
 }
 
 @Composable
-fun ListConcurent(data: Competitors1, navController: NavHostController, competition: Int) {
+fun ListConcurent(data: Competitors, navController: NavHostController, competition: Int, idCourse: Int) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -73,17 +71,19 @@ fun ListConcurent(data: Competitors1, navController: NavHostController, competit
             Text("List of Comcurrents", fontSize = 40.sp)
             Spacer(modifier = Modifier.height(25.dp))
 
-            affichageListConcurent(data,navController)
+            affichageListConcurent(data,navController, idCourse)
 
         }   
     }
 }
 
 @Composable
-fun affichageListConcurent(data: Competitors1, navController: NavHostController) {
+fun affichageListConcurent(data: Competitors, navController: NavHostController, idCourse: Int) {
     LazyColumn {
         items(data.toList()) { competitors ->
-            Button({ }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
+            Button({
+                navController.navigate(Routes.vueArbitrage + "/" + idCourse + "/" + competitors.id)
+            }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
                 Row (
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically

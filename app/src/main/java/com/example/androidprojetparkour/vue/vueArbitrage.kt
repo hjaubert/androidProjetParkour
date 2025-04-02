@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.models.obstacles.ObstaclesCourse
 import com.example.androidprojetparkour.api.models.performancesObstacles.PerformanceObstaclesItem
@@ -120,15 +119,9 @@ fun Chronometre(
     val performanceObstacleViewModel = viewModel[PerformanceObstacleViewModel::class.java]
 
     val obstacles = obstacleViewModel.courseObstacles
-    //val result = obstacles.value
     LaunchedEffect(Unit) {
         obstacleViewModel.getCourseObstacles(idCourse)
     }
-    /*var listObstacle = listOf<ObstacleCourseItem>()
-    if(result is NetworkResponse.Success){
-        listObstacle = result.data
-    }*/
-
 
     Column(modifier = Modifier.fillMaxSize().padding(15.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -148,7 +141,7 @@ fun Chronometre(
                         isRunning = false
                     } else {
                         startTime = System.currentTimeMillis() - time
-                        startTimeObstacle = System.currentTimeMillis() - tempsObstacle
+                        startTimeObstacle = System.currentTimeMillis() - tempsByObstacle
                         isRunning = true
                     }
                 }, modifier = Modifier.weight(1f), enabled = clickEnabled
@@ -160,19 +153,7 @@ fun Chronometre(
 
             Button(onClick = {
                 if(numObstacle == nbObstacles - 1){
-                    clickEnabled = false
-                    isRunning = false
-                    var tempsTotal = 0L
-                    for(o in performanceObstacleViewModel.listTimeByObstacle){
-                        Log.d("Resultat", o.time.toString())
-                        tempsTotal += o.time
-                    }
-                    Log.d("Resultat", tempsTotal.toString())
-                    //Afficher vue de confirmation
-                    //Si il y a plus de concurrents, passer au classement
-                }
-                //startTime = System.currentTimeMillis() - time
-                if(isRunning){
+                    Log.d("Dernier Temps", tempsObstacle.toString())
                     performanceObstacleViewModel.addObstacleParkour(PerformanceObstaclesItem(
                         id = -1,
                         obstacle_id = numObstacle,
@@ -183,43 +164,57 @@ fun Chronometre(
                         created_at = "",
                         updated_at = ""
                     ))
-                    Log.d("Temps", time.toString())
-                    Log.d("Temps", tempsObstacle.toString())
+                    clickEnabled = false
+                    isRunning = false
+                    var tempsTotal = 0L
+                    for(o in performanceObstacleViewModel.listTimeByObstacle){
+                        Log.d("Resultat", o.time.toString())
+                        tempsTotal += o.time
+                    }
+                    Log.d("Temps Calculé", "Temps Calculé : $tempsTotal")
+                    Log.d("Temps obtenu", "Temps obtenu : $time")
+                    //Afficher vue de confirmation
+                    //Si il y a plus de concurrents, passer au classement
+                } else if(isRunning) {
+                    // Sauvegarder le temps pour l'obstacle actuel avant de passer au suivant
+                    performanceObstacleViewModel.addObstacleParkour(PerformanceObstaclesItem(
+                        id = -1,
+                        obstacle_id = numObstacle,
+                        performance_id = -1,
+                        time = tempsByObstacle,
+                        has_fell = 0,
+                        to_verify = 0,
+                        created_at = "",
+                        updated_at = ""
+                    ))
                     setNumObstacle(numObstacle + 1)
+
+                    tempsByObstacle = 0
+                    startTimeObstacle = System.currentTimeMillis()
                 }
-                tempsByObstacle = 0
-                startTimeObstacle = System.currentTimeMillis() - tempsByObstacle
-                //isRunning = false
             }, modifier = Modifier.weight(1f)) {
-
                 Text(text = if(numObstacle == nbObstacles - 1) "Fin de la course" else "Prochain Obstacle", color = Color.White)
-
             }
-
         }
     }
 
     LaunchedEffect(isRunning) {
-
         while(isRunning){
-            delay(1000)
+            delay(10)
             time = System.currentTimeMillis() - startTime
             tempsByObstacle = System.currentTimeMillis() - startTimeObstacle
-
         }
-
     }
-
 }
 
 @SuppressLint("DefaultLocale")
 @Composable
 fun formatTime(timeMiTotal: Long, timeMiObstacle: Long, setTempsObstacle: (Long) -> Unit): String{
-
-    val millisecondes = TimeUnit.MILLISECONDS.toMillis(timeMiObstacle)
     val minutes = TimeUnit.MILLISECONDS.toMinutes(timeMiTotal) % 60
-    val secondes = TimeUnit.MILLISECONDS.toSeconds((timeMiTotal)) % 60
-    setTempsObstacle(millisecondes)
+    val secondes = TimeUnit.MILLISECONDS.toSeconds(timeMiTotal) % 60
+
+    // Utiliser directement le temps par obstacle pour le mettre à jour
+    setTempsObstacle(timeMiObstacle)
 
     return String.format("%02d:%02d", minutes, secondes)
 }
