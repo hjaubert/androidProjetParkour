@@ -33,6 +33,7 @@ import com.example.androidprojetparkour.viewModel.CompetitionViewModel
 import com.example.androidprojetparkour.viewModel.CompetitorViewModel
 import com.example.androidprojetparkour.viewModel.CourseViewModel
 import java.time.LocalDate
+import java.time.Period
 import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -124,6 +125,8 @@ fun vueNewCompetitors(viewModel: ViewModelProvider, navController: NavHostContro
             )
         }
 
+        val result = competition.value
+
         Row {
             Button(
                 onClick = {
@@ -160,19 +163,11 @@ fun vueNewCompetitors(viewModel: ViewModelProvider, navController: NavHostContro
                         return@Button
                     }
 
-                    /*
-                    when(val resultCompetition = competition.value) {
-                        is NetworkResponse.Error -> {
-                            Text(text = resultCompetition.message)
-                        }
-                        NetworkResponse.Loading -> {
-                            CircularProgressIndicator()
-                        }
-                        is NetworkResponse.Success -> {
+                    val birthDate: LocalDate
 
-                        }
-                    }
-                     */
+                    birthDate = LocalDate.parse(textBorn.value)
+
+                    val age = Period.between(birthDate, LocalDate.now()).years
 
                     if(gender.value){
                         textGender.value = "H"
@@ -181,6 +176,24 @@ fun vueNewCompetitors(viewModel: ViewModelProvider, navController: NavHostContro
                         textGender.value = "F"
 
                     }
+
+
+                    if(result is NetworkResponse.Success) {
+                        if(age < result.data.age_min ){
+                            Toast.makeText(context,"Attention, l'age du competiteur est inférieur à l'age minimum de la compétition",Toast.LENGTH_SHORT).show();
+                            return@Button
+                        }
+                        else if (age > result.data.age_max){
+                            Toast.makeText(context,"Attention, l'age du competiteur est supérieur à l'age maximum de la compétition",Toast.LENGTH_SHORT).show();
+                            return@Button
+                        }
+                        else if(result.data.gender != textGender.value){
+                            Log.d("click", result.data.gender + ":" + textGender.value)
+                            Toast.makeText(context,"Attention, le genre du competiteur est différent du genre de la compétition",Toast.LENGTH_SHORT).show();
+                            return@Button
+                        }
+                    }
+
                     viewModelCompetitors.createCompetitor(
                         CompetitorsItem(
                             access_token_id = -1,
