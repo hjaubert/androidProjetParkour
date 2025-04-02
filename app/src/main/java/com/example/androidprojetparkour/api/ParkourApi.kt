@@ -2,6 +2,7 @@ package com.example.androidprojetparkour.api
 
 import com.example.androidprojetparkour.api.models.competitions.Competitions
 import com.example.androidprojetparkour.api.models.competitions.CompetitionsItem
+import com.example.androidprojetparkour.api.models.competitions.CompetitorInCompetitionPost
 import com.example.androidprojetparkour.api.models.competitors.Competitors
 import com.example.androidprojetparkour.api.models.competitors.CompetitorsItem
 import com.example.androidprojetparkour.api.models.courses.Courses
@@ -109,7 +110,7 @@ interface ParkourApi {
     suspend fun storeCompetition(@Body competition: CompetitionsItem): Response<CompetitionsItem>
 
     @POST("competitions/{id}/add_competitor")
-    suspend fun addCompetitorToCompetition(@Path("id") competitionId: Int, @Body competitorId: Int): Response<CompetitorsItem>
+    suspend fun addCompetitorToCompetition(@Path("id") competitionId: Int, @Body competitorId: CompetitorInCompetitionPost): Response<CompetitorsItem>
 
     //-----------------------------Competitors-------------------------------------------
     @POST("competitors")

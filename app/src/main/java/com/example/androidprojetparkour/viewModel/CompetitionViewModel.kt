@@ -9,6 +9,7 @@ import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.RetrofitInstance
 import com.example.androidprojetparkour.api.models.competitions.Competitions
 import com.example.androidprojetparkour.api.models.competitions.CompetitionsItem
+import com.example.androidprojetparkour.api.models.competitions.CompetitorInCompetitionPost
 import com.example.androidprojetparkour.api.models.competitors.Competitors
 import com.example.androidprojetparkour.api.models.competitors.CompetitorsItem
 import kotlinx.coroutines.launch
@@ -172,20 +173,26 @@ class CompetitionViewModel : ViewModel() {
         }
     }
 
-    fun addCompetitorToCompetition(competitionId: Int, competitorId: Int) {
+    fun addCompetitorToCompetition(competitionId: Int, competitorId: CompetitorInCompetitionPost) {
         viewModelScope.launch {
+            Log.d("competition",competitionId.toString())
+            Log.d("competiteur",competitorId.toString())
             _addCompetitorResult.value = NetworkResponse.Loading
             try {
                 val response = parkourApi.addCompetitorToCompetition(competitionId, competitorId)
+                Log.d("",response.message())
                 if (response.isSuccessful) {
                     response.body()?.let {
                         _addCompetitorResult.value = NetworkResponse.Success(it)
+                        Log.d("","OK")
                     }
                 } else {
                     _addCompetitorResult.value = NetworkResponse.Error("Failed to add competitor")
+                    Log.d("","KO")
                 }
             } catch (e: Exception) {
                 _addCompetitorResult.value = NetworkResponse.Error("Failed to add competitor: ${e.message}")
+                Log.d("","KO")
             }
         }
     }
