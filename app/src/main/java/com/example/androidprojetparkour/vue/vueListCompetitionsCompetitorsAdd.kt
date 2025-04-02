@@ -1,6 +1,7 @@
 package com.example.androidprojetparkour.vue
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,12 +24,14 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.models.competitions.Competitions
+import com.example.androidprojetparkour.api.models.competitions.CompetitorInCompetitionPost
 import com.example.androidprojetparkour.api.models.competitors.Competitors
 import com.example.androidprojetparkour.api.models.competitors.CompetitorsItem
 import com.example.androidprojetparkour.router.Routes
@@ -57,6 +60,8 @@ fun vueListCompetitionsCompetitorsAdd(
         viewModelCompetitions.getOneCompetition(competition)
         viewModelCompetitions.getRegisteredCompetitorsInCompetition(competition)
         viewModelCompetitiors.getCompetitors()
+
+
     }
     Column {
         when(val resultCompetition = competitionsResult.value){
@@ -84,7 +89,7 @@ fun vueListCompetitionsCompetitorsAdd(
                             }
                             is NetworkResponse.Success -> {
                                 val competitorsValide = listCompetitiorsValide(resultCompetition.data,resultCompetitorRegister.data,competitorsResult.data)
-                                listCompetitorsAdd(competitorsValide,navController,competition)
+                                listCompetitorsAdd(competitorsValide,navController,competition,viewModelCompetitions,competition)
                             }
                             null -> {}
                         }
@@ -101,9 +106,6 @@ fun vueListCompetitionsCompetitorsAdd(
 
 @Composable
 fun listCompetitiorsValide(theCompetition: Competitions, CompetitorsInCompetition: Competitors, AllCompetitors: Competitors): List<CompetitorsItem> {
-    Log.d("",theCompetition.toString())
-    Log.d("",CompetitorsInCompetition.toString())
-    Log.d("",AllCompetitors.toString())
     val competitoesValide = mutableListOf<CompetitorsItem>()
     for (competitorAssume in AllCompetitors){
         if (competitorAssume.gender == theCompetition[0].gender && calculateAge(competitorAssume.born_at) >= theCompetition[0].age_min && calculateAge(competitorAssume.born_at) <= theCompetition[0].age_max && !CompetitorsInCompetition.contains(competitorAssume)){
@@ -136,6 +138,8 @@ fun listCompetitorsAdd(
     data: List<CompetitorsItem>,
     navController: NavHostController,
     competition: Int,
+    viewModelCompetitions: CompetitionViewModel,
+    competition1: Int
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -144,15 +148,15 @@ fun listCompetitorsAdd(
 
             ) {
             Spacer(modifier = Modifier.height(35.dp))
-            Text("List of Competitors", fontSize = 40.sp)
+            Text("Add Competitors", fontSize = 40.sp)
             Spacer(modifier = Modifier.height(25.dp))
 
-            affichageListCompetitorAdd(data,navController)
+            affichageListCompetitorAdd(data,navController,viewModelCompetitions,competition)
 
         }
 
         Button(
-            onClick = { navController.navigate(Routes.vueNewCompetitors+"/"+competition) },
+            onClick = { navController.navigate(Routes.vueListCompetitionsCompetitorsAdd+"/"+competition) },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
                 contentColor = Color.White
@@ -167,10 +171,28 @@ fun listCompetitorsAdd(
 }
 
 @Composable
-fun affichageListCompetitorAdd(data: List<CompetitorsItem>, navController: NavHostController) {
+fun affichageListCompetitorAdd(
+    data: List<CompetitorsItem>,
+    navController: NavHostController,
+    viewModelCompetitions: CompetitionViewModel,
+    competition: Int
+) {
+
+    val competitorsResult = viewModelCompetitions.addCompetitorResult.observeAsState()
+
+    val context = LocalContext.current
     LazyColumn {
         items(data.toList()) { competitors ->
-            Button({ }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
+            Button({
+
+                val competitorInCompetitionPost = CompetitorInCompetitionPost(competitors.id)
+
+                viewModelCompetitions.addCompetitorToCompetition(competition, competitorInCompetitionPost)
+
+                navController.navigate(Routes.vueListCompetitionsCompetitorsAdd+"/"+ competition)
+
+
+            }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
                 Row (
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically

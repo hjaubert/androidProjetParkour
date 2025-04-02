@@ -16,7 +16,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +29,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.models.courses.Courses
+import com.example.androidprojetparkour.api.models.courses.CoursesItem
 import com.example.androidprojetparkour.router.Routes
 import com.example.androidprojetparkour.viewModel.CourseViewModel
 
@@ -93,7 +97,14 @@ fun listParkour(data: Courses, navController: NavHostController, competition: In
 fun affichageListParkours(data: Courses, navController: NavHostController, competition: Int) {
     LazyColumn {
         items(data.toList()) { course ->
-            Button({ navController.navigate(Routes.vueListConcurents+"/" + course.id + "/" + competition) }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
+            var showButtons = remember { mutableStateOf(false) }
+            Button({
+                        if (!showButtons.value){
+                            showButtons.value = true
+                        }else {
+                            showButtons.value = false
+                        }
+                   }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
@@ -104,6 +115,33 @@ fun affichageListParkours(data: Courses, navController: NavHostController, compe
                     )
                 }
             }
+            sousBoutonParkour(showButtons,navController,course,competition);
+        }
+    }
+}
+
+@Composable
+fun sousBoutonParkour(
+    showNewButtons: MutableState<Boolean>,
+    navController: NavHostController,
+    course: CoursesItem,
+    competition: Int,
+
+    ) {
+    if (showNewButtons.value) {
+        Spacer(modifier = Modifier.height(20.dp))
+        Button(
+            onClick = {navController.navigate(Routes.vueListConcurents+"/"+course.id + "/" + competition)},
+            modifier = Modifier.fillMaxWidth().padding(15.dp)
+        ) {
+            Text("Concurents", fontSize = 20.sp)
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Button(
+            onClick = {navController.navigate(Routes.vueListObstacles+"/"+course.id)},
+            modifier = Modifier.fillMaxWidth().padding(15.dp)
+        ) {
+            Text("Obstacle", fontSize = 20.sp)
         }
     }
 }

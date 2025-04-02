@@ -13,9 +13,12 @@ import com.example.androidprojetparkour.vue.vueListCompetitionsCompetitors
 import com.example.androidprojetparkour.vue.vueListCompetitionsCompetitorsAdd
 import com.example.androidprojetparkour.vue.vueListCompetitionsParkours
 import com.example.androidprojetparkour.vue.vueListConcurents
+import com.example.androidprojetparkour.vue.vueListObstaclesDisponible
+import com.example.androidprojetparkour.vue.vueListObstales
 import com.example.androidprojetparkour.vue.vueNewCompetition
 import com.example.androidprojetparkour.vue.vueNewCompetitors
 import com.example.androidprojetparkour.vue.vueNewParkour
+import com.example.androidprojetparkour.vue.vueNewObstacle
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -26,6 +29,11 @@ fun Router(viewModel: ViewModelProvider) {
     NavHost(navController =  navController, startDestination = Routes.vueListCompetitions, builder = {
         composable(Routes.vueNewCompetition){
             vueNewCompetition(viewModel,navController)
+        }
+        composable(Routes.vueNewObstacle +"/{data}"){
+            val dataString = it.arguments?.getString("data")
+            val data = dataString?.toInt() ?:-1
+            vueNewObstacle(viewModel,navController,data)
         }
 
         composable(Routes.vueListCompetitions){
@@ -45,6 +53,16 @@ fun Router(viewModel: ViewModelProvider) {
             val dataString = it.arguments?.getString("data")
             val data = dataString?.toInt() ?:-1
             vueListCompetitionsCompetitorsAdd(viewModel,data,navController)
+        }
+        composable(Routes.vueListObstacles +"/{coursId}"){
+            val coursIdString = it.arguments?.getString("coursId")
+            val coursId = coursIdString?.toInt() ?:-1
+            vueListObstales(viewModel,coursId,navController)
+        }
+        composable(Routes.vueListObstaclesDisponible +"/{data}"){
+            val dataString = it.arguments?.getString("data")
+            val data = dataString?.toInt() ?:-1
+            vueListObstaclesDisponible(viewModel,data,navController)
         }
 
         composable(Routes.vueNewParkour +"/{data}"){

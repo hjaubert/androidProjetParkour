@@ -9,6 +9,7 @@ import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.RetrofitInstance
 import com.example.androidprojetparkour.api.models.competitions.Competitions
 import com.example.androidprojetparkour.api.models.competitions.CompetitionsItem
+import com.example.androidprojetparkour.api.models.competitions.CompetitorInCompetitionPost
 import com.example.androidprojetparkour.api.models.competitors.Competitors
 import com.example.androidprojetparkour.api.models.competitors.CompetitorsItem
 import kotlinx.coroutines.launch
@@ -172,7 +173,7 @@ class CompetitionViewModel : ViewModel() {
         }
     }
 
-    fun addCompetitorToCompetition(competitionId: Int, competitorId: Int) {
+    fun addCompetitorToCompetition(competitionId: Int, competitorId: CompetitorInCompetitionPost) {
         viewModelScope.launch {
             _addCompetitorResult.value = NetworkResponse.Loading
             try {

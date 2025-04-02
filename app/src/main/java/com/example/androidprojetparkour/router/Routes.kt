@@ -2,6 +2,8 @@ package com.example.androidprojetparkour.router
 
 object Routes {
     var vueListCompetitions = "vueListCompetitions"
+    var vueListObstacles = "vueListObstacles"
+    var vueListObstaclesDisponible = "vueListObstaclesDisponible"
     var vueListCompetitionsParkours = "vueListCompetitionsParkours"
     var vueListCompetitionsCompetitors = "vueListCompetitionsCompetitors"
     var vueListCompetitionsCompetitorsAdd = "vueListCompetitionsCompetitorsAdd"
@@ -11,4 +13,5 @@ object Routes {
     var vueListConcurents = "vueListConcurents"
     var vueNewCompetitors = "vueNewCompetitors"
     var vueNextCompetitor = "vueNextCompetitor"
+    var vueNewObstacle = "vueNewObstacle"
 }

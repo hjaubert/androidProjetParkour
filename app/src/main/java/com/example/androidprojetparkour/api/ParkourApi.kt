@@ -2,10 +2,12 @@ package com.example.androidprojetparkour.api
 
 import com.example.androidprojetparkour.api.models.competitions.Competitions
 import com.example.androidprojetparkour.api.models.competitions.CompetitionsItem
+import com.example.androidprojetparkour.api.models.competitions.CompetitorInCompetitionPost
 import com.example.androidprojetparkour.api.models.competitors.Competitors
 import com.example.androidprojetparkour.api.models.competitors.CompetitorsItem
 import com.example.androidprojetparkour.api.models.courses.Courses
 import com.example.androidprojetparkour.api.models.courses.CoursesItem
+import com.example.androidprojetparkour.api.models.obstacles.ObstaclePost
 import com.example.androidprojetparkour.api.models.obstacles.ObstaclesCourse
 import com.example.androidprojetparkour.api.models.obstacles.Obstacles
 import com.example.androidprojetparkour.api.models.obstacles.ObstaclesItem
@@ -109,7 +111,7 @@ interface ParkourApi {
     suspend fun storeCompetition(@Body competition: CompetitionsItem): Response<CompetitionsItem>
 
     @POST("competitions/{id}/add_competitor")
-    suspend fun addCompetitorToCompetition(@Path("id") competitionId: Int, @Body competitorId: Int): Response<CompetitorsItem>
+    suspend fun addCompetitorToCompetition(@Path("id") competitionId: Int, @Body competitorId: CompetitorInCompetitionPost): Response<CompetitorsItem>
 
     //-----------------------------Competitors-------------------------------------------
     @POST("competitors")
@@ -120,7 +122,7 @@ interface ParkourApi {
     suspend fun storeCourse(@Body course: CoursesItem): Response<CoursesItem>
 
     @POST("courses/{id}/add_obstacle")
-    suspend fun addObstacleToCourse(@Path("id") courseId: Int, @Body obstacleId: Int): Response<ObstaclesItem>
+    suspend fun addObstacleToCourse(@Path("id") courseId: Int, @Body obstaclePost: ObstaclePost): Response<ObstaclesItem>
 
     @POST("courses/{id}/update_obtacle_position")
     suspend fun updateObstaclePosition(@Path("id") courseId: Int, @Body obstacleId: Int, @Body position: Int): Response<ObstaclesItem>

@@ -8,6 +8,7 @@ import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.RetrofitInstance
 import com.example.androidprojetparkour.api.models.courses.Courses
 import com.example.androidprojetparkour.api.models.courses.CoursesItem
+import com.example.androidprojetparkour.api.models.obstacles.ObstaclePost
 import com.example.androidprojetparkour.api.models.obstacles.Obstacles
 import com.example.androidprojetparkour.api.models.obstacles.ObstaclesItem
 import kotlinx.coroutines.launch
@@ -191,11 +192,11 @@ class CourseViewModel : ViewModel() {
         }
     }
 
-    fun addObstacleToCourse(courseId: Int, obstacleId: Int) {
+    fun addObstacleToCourse(courseId: Int, obstaclePost: ObstaclePost) {
         viewModelScope.launch {
             _addObstacleResult.value = NetworkResponse.Loading
             try {
-                val response = parkourApi.addObstacleToCourse(courseId, obstacleId)
+                val response = parkourApi.addObstacleToCourse(courseId, obstaclePost)
                 if (response.isSuccessful) {
                     response.body()?.let {
                         _addObstacleResult.value = NetworkResponse.Success(it)
