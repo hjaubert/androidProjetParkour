@@ -175,24 +175,18 @@ class CompetitionViewModel : ViewModel() {
 
     fun addCompetitorToCompetition(competitionId: Int, competitorId: CompetitorInCompetitionPost) {
         viewModelScope.launch {
-            Log.d("competition",competitionId.toString())
-            Log.d("competiteur",competitorId.toString())
             _addCompetitorResult.value = NetworkResponse.Loading
             try {
                 val response = parkourApi.addCompetitorToCompetition(competitionId, competitorId)
-                Log.d("",response.message())
                 if (response.isSuccessful) {
                     response.body()?.let {
                         _addCompetitorResult.value = NetworkResponse.Success(it)
-                        Log.d("","OK")
                     }
                 } else {
                     _addCompetitorResult.value = NetworkResponse.Error("Failed to add competitor")
-                    Log.d("","KO")
                 }
             } catch (e: Exception) {
                 _addCompetitorResult.value = NetworkResponse.Error("Failed to add competitor: ${e.message}")
-                Log.d("","KO")
             }
         }
     }

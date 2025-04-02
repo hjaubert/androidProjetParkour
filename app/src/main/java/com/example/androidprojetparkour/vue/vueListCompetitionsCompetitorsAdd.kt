@@ -191,22 +191,7 @@ fun affichageListCompetitorAdd(
 
                 viewModelCompetitions.addCompetitorToCompetition(competition, competitorInCompetitionPost)
 
-                when(val resultCompetitorRegister = competitorsResult.value){
-                    is NetworkResponse.Error -> {
-                        Log.d("","error")
-                    }
-
-                    NetworkResponse.Loading -> {
-                        Log.d("","wait")
-                    }
-                    is NetworkResponse.Success -> {
-                        Toast.makeText(context,"Ajout effectuer",
-                            Toast.LENGTH_SHORT).show();
-                        Log.d("",resultCompetitorRegister.data.toString())
-                        navController.navigate(Routes.vueListCompetitionsCompetitorsAdd+"/"+ competition)
-                    }
-                    null -> {}
-                }
+                navController.navigate(Routes.vueListCompetitionsCompetitorsAdd+"/"+ competition)
 
 
             }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
