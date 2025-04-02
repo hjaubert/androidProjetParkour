@@ -1,5 +1,6 @@
 package com.example.androidprojetparkour.viewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -94,13 +95,16 @@ class PerformanceObstacleViewModel : ViewModel() {
     fun createPerformanceObstacle(performanceObstacle: PerformanceObstaclesItem) {
         viewModelScope.launch {
             _createPerformanceObstacleResult.value = NetworkResponse.Loading
+            Log.d("Loading", "ça charge")
             try {
                 val response = parkourApi.storePerformanceObstacle(performanceObstacle)
                 if (response.isSuccessful) {
+                    Log.d("SUCCESS", "reussi")
                     response.body()?.let {
                         _createPerformanceObstacleResult.value = NetworkResponse.Success(it)
                     }
                 } else {
+                    Log.d("ERROR", "ERROR")
                     _createPerformanceObstacleResult.value = NetworkResponse.Error("Failed to create performance obstacle")
                 }
             } catch (e: Exception) {

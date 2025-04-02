@@ -71,12 +71,13 @@ fun Router(viewModel: ViewModelProvider) {
             vueNewParkour(viewModel,navController,data)
         }
 
-        composable(Routes.vueArbitrage +"/{idCourse}/{idCompetitor}"){
+        composable(Routes.vueArbitrage +"/{idCourse}/{idCompetitor}/{idCompetition}"){
             val dataStringIdCourse = it.arguments?.getString("idCourse")
             val dataStringIdCompetitor = it.arguments?.getString("idCompetitor")
+            val dataStringIdCompetition = it.arguments?.getString("idCompetition")
             val idCourse = dataStringIdCourse?.toInt() ?:-1
-            val idCompetitor = dataStringIdCompetitor?.toInt() ?:-1
-            vueArbitrage(viewModel, idCourse, idCompetitor)
+            val idCompetition = dataStringIdCompetition?.toInt() ?:-1
+            vueArbitrage(viewModel, idCourse, idCompetition)
         }
         composable(Routes.vueListConcurents +"/{data}/{idCompetition}"){
             val dataString = it.arguments?.getString("data")
@@ -90,6 +91,5 @@ fun Router(viewModel: ViewModelProvider) {
             val data = dataString?.toInt() ?:-1
             vueNewCompetitors(viewModel,navController,data)
         }
-        composable(Routes.vueNextCompetitor +"/{data}"){}
     })
 }

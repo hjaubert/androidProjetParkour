@@ -39,6 +39,8 @@ class PerformanceViewModel : ViewModel() {
     private val _deletePerformanceResult = MutableLiveData<NetworkResponse<Unit>>()
     val deletePerformanceResult: LiveData<NetworkResponse<Unit>> = _deletePerformanceResult
 
+    val classement = ArrayList<PerformancesItem>()
+
     fun getCompetitorPerformances(competitorId: Int) {
         viewModelScope.launch {
             _competitorPerformances.value = NetworkResponse.Loading
