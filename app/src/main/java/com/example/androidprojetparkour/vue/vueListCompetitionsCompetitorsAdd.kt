@@ -23,6 +23,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
@@ -125,7 +126,7 @@ fun calculateAge(birthDate: String): Int {
     var age = todayCalendar.get(Calendar.YEAR) - birthCalendar.get(Calendar.YEAR)
 
     if (todayCalendar.get(Calendar.DAY_OF_YEAR) < birthCalendar.get(Calendar.DAY_OF_YEAR)) {
-        age-- // Ajuste si l'anniversaire n'est pas encore passé cette année
+        age--
     }
 
     return age
@@ -144,11 +145,24 @@ fun listCompetitorsAdd(
 
             ) {
             Spacer(modifier = Modifier.height(35.dp))
-            Text("List of Competitors", fontSize = 40.sp)
+            Text("List of valid Competitors", fontSize = 40.sp,textAlign = TextAlign.Center)
             Spacer(modifier = Modifier.height(25.dp))
 
             affichageListCompetitorAdd(data,navController)
 
+        }
+
+        Button(
+            onClick = { navController.navigate(Routes.vueListCompetitionsCompetitors + "/" + competition) },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Black,
+                contentColor = Color.White
+            ),
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 16.dp, bottom = 50.dp)
+        ) {
+            Text("Back", fontSize = 20.sp)
         }
 
         Button(
@@ -159,7 +173,7 @@ fun listCompetitorsAdd(
             ),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp)
+                .padding(16.dp,bottom = 50.dp)
         ) {
             Text("New", fontSize = 25.sp)
         }

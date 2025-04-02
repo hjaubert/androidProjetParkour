@@ -82,9 +82,22 @@ fun listParkour(data: Courses, navController: NavHostController, competition: In
             ),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp)
+                .padding(16.dp,bottom = 50.dp)
         ) {
-            Text("New", fontSize = 25.sp)
+            Text("New", fontSize = 20.sp)
+        }
+
+        Button(
+            onClick = { navController.navigate(Routes.vueListCompetitions) },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Black,
+                contentColor = Color.White
+            ),
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 16.dp, bottom = 50.dp)
+        ) {
+            Text("Back", fontSize = 20.sp)
         }
     }
 }

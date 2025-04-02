@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -63,38 +64,35 @@ fun vueListCompetition(viewModel: ViewModelProvider, navController: NavHostContr
 }
 
 @Composable
-fun ParkourDetails(data: Competitions, navController: NavHostController){
-
+fun ParkourDetails(data: Competitions, navController: NavHostController) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-
+            modifier = Modifier.fillMaxSize()
         ) {
             Spacer(modifier = Modifier.height(35.dp))
             Text("List of Competition", fontSize = 40.sp)
             Spacer(modifier = Modifier.height(25.dp))
 
-            affichageCompetiton(data,navController)
-
+            affichageCompetiton(data, navController)
         }
 
         Button(
-            onClick = {
-                navController.navigate(Routes.vueNewCompetition)
-            },
+            onClick = { navController.navigate(Routes.vueNewCompetition) },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
                 contentColor = Color.White
             ),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp)
+                .padding(end = 16.dp, bottom = 50.dp)
         ) {
             Text("New", fontSize = 25.sp)
         }
     }
 }
+
 
 @Composable
 fun affichageCompetiton(data: Competitions, navController: NavHostController) {
@@ -155,19 +153,34 @@ fun sousBouton(
     competition: CompetitionsItem
 ) {
     if (showNewButtons.value) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Button(
-            onClick = {navController.navigate(Routes.vueListCompetitionsCompetitors + "/" + competition.id)},
-            modifier = Modifier.fillMaxWidth().padding(15.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Competitors", fontSize = 20.sp)
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Button(
-            onClick = {navController.navigate(Routes.vueListCompetitionsParkours + "/" + competition.id)},
-            modifier = Modifier.fillMaxWidth().padding(15.dp)
-        ) {
-            Text("Parkours", fontSize = 20.sp)
+            Button(
+                onClick = { navController.navigate(Routes.vueListCompetitionsCompetitors + "/" + competition.id) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFFD700),
+                    contentColor = Color.Black
+                ),
+                modifier = Modifier.width(250.dp)
+            ) {
+                Text(" ➤ Competitors", fontSize = 20.sp)
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Button(
+                onClick = { navController.navigate(Routes.vueListCompetitionsParkours + "/" + competition.id) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFFD700),
+                    contentColor = Color.Black
+                ),
+                modifier = Modifier.width(250.dp)
+            ) {
+                Text(" ➤ Parkours", fontSize = 20.sp)
+            }
         }
     }
 }
+
