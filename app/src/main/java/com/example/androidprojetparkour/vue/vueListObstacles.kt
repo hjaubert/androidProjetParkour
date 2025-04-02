@@ -31,7 +31,12 @@ import com.example.androidprojetparkour.viewModel.ObstacleViewModel
 
 
 @Composable
-fun vueListObstales(viewModel: ViewModelProvider, coursId: Int, navController: NavHostController){
+fun vueListObstales(
+    viewModel: ViewModelProvider,
+    coursId: Int,
+    navController: NavHostController,
+    dataStringIdCompetitor: String?
+){
     val viewModelObstacle = viewModel[ObstacleViewModel::class.java]
     val obstacleResult = viewModelObstacle.courseObstacles.observeAsState()
 
@@ -48,7 +53,7 @@ fun vueListObstales(viewModel: ViewModelProvider, coursId: Int, navController: N
                 CircularProgressIndicator()
             }
             is NetworkResponse.Success -> {
-                listObstacleDisponible(result.data,navController, coursId)
+                listObstacleDisponible(result.data,navController, coursId,dataStringIdCompetitor)
             }
             null -> {}
         }
@@ -57,7 +62,12 @@ fun vueListObstales(viewModel: ViewModelProvider, coursId: Int, navController: N
 }
 
 @Composable
-fun listObstacleDisponible(obstaclesCourse: ObstaclesCourse, navController: NavHostController, coursId: Int){
+fun listObstacleDisponible(
+    obstaclesCourse: ObstaclesCourse,
+    navController: NavHostController,
+    coursId: Int,
+    dataStringIdCompetitor: String?
+){
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -93,17 +103,30 @@ fun listObstacleDisponible(obstaclesCourse: ObstaclesCourse, navController: NavH
 
         Button(
             onClick = {
-                navController.navigate(Routes.vueListObstaclesDisponible+"/"+coursId)
+                navController.navigate(Routes.vueListObstaclesDisponible+"/"+coursId+"/"+dataStringIdCompetitor)
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black,  // Couleur de fond
-                contentColor = Color.White   // Couleur du texte
+                containerColor = Color.Black,
+                contentColor = Color.White
             ),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp)
+                .padding(16.dp,bottom = 50.dp)
         ) {
             Text("add", fontSize = 25.sp)
+        }
+
+        Button(
+            onClick = { navController.navigate(Routes.vueListCompetitionsParkours + "/" + dataStringIdCompetitor ) },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Black,
+                contentColor = Color.White
+            ),
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 16.dp, bottom = 50.dp)
+        ) {
+            Text("Back", fontSize = 20.sp)
         }
     }
 }

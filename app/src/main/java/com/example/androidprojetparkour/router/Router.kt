@@ -30,10 +30,11 @@ fun Router(viewModel: ViewModelProvider) {
         composable(Routes.vueNewCompetition){
             vueNewCompetition(viewModel,navController)
         }
-        composable(Routes.vueNewObstacle +"/{data}"){
+        composable(Routes.vueNewObstacle +"/{data}/{idCompetitor}"){
+            val dataStringIdCompetitor = it.arguments?.getString("idCompetitor")
             val dataString = it.arguments?.getString("data")
             val data = dataString?.toInt() ?:-1
-            vueNewObstacle(viewModel,navController,data)
+            vueNewObstacle(viewModel,navController,data,dataStringIdCompetitor)
         }
 
         composable(Routes.vueListCompetitions){
@@ -54,15 +55,17 @@ fun Router(viewModel: ViewModelProvider) {
             val data = dataString?.toInt() ?:-1
             vueListCompetitionsCompetitorsAdd(viewModel,data,navController)
         }
-        composable(Routes.vueListObstacles +"/{coursId}"){
+        composable(Routes.vueListObstacles +"/{coursId}/{idCompetitor}"){
+            val dataStringIdCompetitor = it.arguments?.getString("idCompetitor")
             val coursIdString = it.arguments?.getString("coursId")
             val coursId = coursIdString?.toInt() ?:-1
-            vueListObstales(viewModel,coursId,navController)
+            vueListObstales(viewModel,coursId,navController,dataStringIdCompetitor)
         }
-        composable(Routes.vueListObstaclesDisponible +"/{data}"){
+        composable(Routes.vueListObstaclesDisponible +"/{data}/{idCompetitor}"){
+            val dataStringIdCompetitor = it.arguments?.getString("idCompetitor")
             val dataString = it.arguments?.getString("data")
             val data = dataString?.toInt() ?:-1
-            vueListObstaclesDisponible(viewModel,data,navController)
+            vueListObstaclesDisponible(viewModel,data,navController,dataStringIdCompetitor)
         }
 
         composable(Routes.vueNewParkour +"/{data}"){

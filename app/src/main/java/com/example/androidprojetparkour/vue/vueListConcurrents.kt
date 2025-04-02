@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
@@ -68,17 +70,37 @@ fun ListConcurent(data: Competitors, navController: NavHostController, competiti
 
             ) {
             Spacer(modifier = Modifier.height(35.dp))
-            Text("List of Comcurrents", fontSize = 40.sp)
+            Text("List of Comcurrents !", fontSize = 40.sp)
             Spacer(modifier = Modifier.height(25.dp))
 
             affichageListConcurent(data,navController, idCourse)
 
-        }   
+        }
+
+        Box(modifier = Modifier.fillMaxSize()) {
+
+            Button(
+                onClick = { navController.navigate(Routes.vueListCompetitionsParkours + "/" + competition) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Black,
+                    contentColor = Color.White
+                ),
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 16.dp, bottom = 50.dp)
+            ) {
+                Text("Back", fontSize = 20.sp)
+            }
+        }
     }
 }
 
 @Composable
-fun affichageListConcurent(data: Competitors, navController: NavHostController, idCourse: Int) {
+fun affichageListConcurent(
+    data: Competitors,
+    navController: NavHostController,
+    idCourse: Int,
+) {
     LazyColumn {
         items(data.toList()) { competitors ->
             Button({
