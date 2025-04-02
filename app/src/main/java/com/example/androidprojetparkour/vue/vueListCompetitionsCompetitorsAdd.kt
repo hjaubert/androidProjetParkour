@@ -168,7 +168,7 @@ fun listCompetitorsAdd(
         }
 
         Button(
-            onClick = { navController.navigate(Routes.vueListCompetitionsCompetitorsAdd+"/"+competition) },
+            onClick = { navController.navigate(Routes.vueNewCompetitors+"/"+competition) },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
                 contentColor = Color.White
