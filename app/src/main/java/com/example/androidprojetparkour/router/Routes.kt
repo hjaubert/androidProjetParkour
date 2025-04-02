@@ -10,4 +10,5 @@ object Routes {
     var vueArbitrage = "vueArbitrage"
     var vueListConcurents = "vueListConcurents"
     var vueNewCompetitors = "vueNewCompetitors"
+    var vueNextCompetitor = "vueNextCompetitor"
 }

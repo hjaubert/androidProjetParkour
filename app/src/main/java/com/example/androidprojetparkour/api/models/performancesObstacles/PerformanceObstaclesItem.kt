@@ -6,7 +6,7 @@ data class PerformanceObstaclesItem(
     val id: Int,
     val obstacle_id: Int,
     val performance_id: Int,
-    val time: Int,
+    val time: Long,
     val to_verify: Int,
     val updated_at: String
 )
