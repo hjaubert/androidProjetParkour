@@ -10,6 +10,17 @@ import kotlinx.coroutines.launch
 
 class PerformanceObstacleBddViewModel(private val repository: Repository): ViewModel(){
 
-    fun getPerformances() = repository.getPerformances().asLiveData()
+    fun getPerformances() = repository.getPerformances().asLiveData(viewModelScope.coroutineContext)
 
+    fun insertPerformanceObstacle(performanceObstacle: PerformanceObstacleBdd){
+        viewModelScope.launch {
+            repository.insertPerformanceObstacle(performanceObstacle)
+        }
+    }
+
+    fun deletePerformanceObstacle(performanceObstacle: PerformanceObstacleBdd){
+        viewModelScope.launch {
+            repository.deletePerformancesObstacle(performanceObstacle)
+        }
+    }
 }

@@ -33,7 +33,7 @@ fun Router(viewModel: ViewModelProvider) {
             val dataString = it.arguments?.getString("data")
             val idCourse = dataString?.toInt() ?:-1
             val idCompetitor = dataString?.toInt() ?:-1
-            vueArbitrage(viewModel,idCourse,idCompetitor)
+            vueArbitrage(viewModel, idCourse, idCompetitor)
         }
 
     })

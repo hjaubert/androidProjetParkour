@@ -25,20 +25,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.models.obstacles.ObstacleCourseItem
-import com.example.androidprojetparkour.bdd.PerformanceObstacleBddViewModel
-import com.example.androidprojetparkour.bdd.view_models.PerformancesBddViewModel
 import com.example.androidprojetparkour.api.models.obstacles.ObstaclesCourse
+import com.example.androidprojetparkour.bdd.BasePerformances
+import com.example.androidprojetparkour.bdd.PerformanceObstacleBdd
+import com.example.androidprojetparkour.bdd.PerformanceObstacleBddViewModel
+import com.example.androidprojetparkour.bdd.PerformanceObstacleBddViewModelFactory
+import com.example.androidprojetparkour.bdd.Repository
 import com.example.androidprojetparkour.viewModel.CompetitorViewModel
 import com.example.androidprojetparkour.viewModel.ObstacleViewModel
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun vueArbitrage(viewModel: ViewModelProvider, idCourse: Int, idCompetitor: Int) {
+fun vueArbitrage(
+    viewModel: ViewModelProvider,
+    idCourse: Int,
+    idCompetitor: Int
+) {
 
     val obstacleViewModel = viewModel[ObstacleViewModel::class.java]
     val competitorViewModel = viewModel[CompetitorViewModel::class.java]
@@ -47,9 +56,17 @@ fun vueArbitrage(viewModel: ViewModelProvider, idCourse: Int, idCompetitor: Int)
     var (tempsObstacle, setTempsObstacle) = remember { mutableLongStateOf(0) }
     var (nbObstacleTraverse, setnbObstacleTraverse) = remember { mutableIntStateOf(0) }
 
+    /*val db = BasePerformances.getInstance(LocalContext.current)
+    val vm: PerformanceObstacleBddViewModel = viewModel(factory =
+        PerformanceObstacleBddViewModelFactory(
+            Repository(db)
+        )
+    )*/
+
     Column(modifier = Modifier.fillMaxSize().padding(25.dp)) {
         ListObstacles(obstacleViewModel, competitorViewModel ,numObstacle, idCourse) { nb -> setnbObstacles(nb) }
-        Chronometre(numObstacle, nbObstacles, { num -> setNumObstacle(num) }, tempsObstacle, { temps -> setTempsObstacle(temps) }, obstacleViewModel, idCourse, idCompetitor, viewModel)
+        Chronometre(numObstacle, nbObstacles, { num -> setNumObstacle(num) }, tempsObstacle, { temps -> setTempsObstacle(temps) },
+            obstacleViewModel, idCourse, idCompetitor/*, vm*/)
     }
 }
 
@@ -102,7 +119,7 @@ fun Chronometre(
     obstacleViewModel: ObstacleViewModel,
     idCourse: Int,
     idCompetitor: Int,
-    viewModel: ViewModelProvider
+    //vm: PerformanceObstacleBddViewModel
 ) {
 
     var time by remember { mutableLongStateOf(0) }
@@ -110,12 +127,6 @@ fun Chronometre(
     var isRunning by remember { mutableStateOf(false) }
     var startTime by remember { mutableLongStateOf(0) }
     var startTimeObstacle by remember { mutableLongStateOf(0) }
-
-    val perfObstacleBddViewModel = viewModel[PerformanceObstacleBddViewModel::class.java]
-    val perfBddViewModel = viewModel[PerformancesBddViewModel::class.java]
-
-    perfBddViewModel.ajouterPerformance(idCompetitor, idCourse, "En cours", time)
-    val performance = perfBddViewModel.getPerformance(idCourse, idCompetitor)
 
     val obstacles = obstacleViewModel.courseObstacles
     val result = obstacles.value
@@ -165,12 +176,18 @@ fun Chronometre(
                 }
                 tempsByObstacle = 0
                 startTimeObstacle = System.currentTimeMillis() - tempsByObstacle
-                startTime = System.currentTimeMillis() - time
+                //startTime = System.currentTimeMillis() - time
                 if(isRunning){
                     Log.d("Temps", time.toString())
                     Log.d("Temps", tempsObstacle.toString())
 
-                    perfObstacleBddViewModel.ajouterPerformanceObstacle(listObstacle[numObstacle].id, performance.id, tempsByObstacle, 0, 0)
+                    /*vm.insertPerformanceObstacle(PerformanceObstacleBdd(
+                        obstacle_id = listObstacle[numObstacle].id,
+                        performance_id = idCompetitor,
+                        time = tempsByObstacle,
+                        has_fell = 0,
+                        to_verify = 0
+                    ))*/
 
                     setNumObstacle(numObstacle + 1)
                 }
