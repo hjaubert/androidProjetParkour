@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -142,19 +143,31 @@ fun sousBoutonParkour(
 
     ) {
     if (showNewButtons.value) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Button(
-            onClick = {navController.navigate(Routes.vueListConcurents+"/"+course.id + "/" + competition)},
-            modifier = Modifier.fillMaxWidth().padding(15.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Concurents", fontSize = 20.sp)
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Button(
-            onClick = {navController.navigate(Routes.vueListObstacles+"/"+course.id)},
-            modifier = Modifier.fillMaxWidth().padding(15.dp)
-        ) {
-            Text("Obstacle", fontSize = 20.sp)
+            Button(
+                onClick = { navController.navigate(Routes.vueListConcurents + "/" + course.id + "/" + competition) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFFD700),
+                    contentColor = Color.Black
+                ),
+                modifier = Modifier.width(250.dp)
+            ) {
+                Text("➤ Concurents", fontSize = 20.sp)
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Button(
+                onClick = { navController.navigate(Routes.vueListObstacles + "/" + course.id + "/" + competition) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFFD700),
+                    contentColor = Color.Black
+                ),
+                modifier = Modifier.width(250.dp)
+            ) {
+                Text("➤ Obstacle", fontSize = 20.sp)
+            }
         }
     }
 }

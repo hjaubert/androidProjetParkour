@@ -1,5 +1,6 @@
 package com.example.androidprojetparkour.vue
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,8 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,57 +29,85 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.models.competitions.Competitions
-import com.example.androidprojetparkour.viewModel.CompetitionViewModel
-import androidx.compose.ui.graphics.Color
 import com.example.androidprojetparkour.api.models.competitions.CompetitionsItem
 import com.example.androidprojetparkour.router.Routes
+import com.example.androidprojetparkour.viewModel.CompetitionViewModel
 
+private val BackgroundColor = Color(0xFFF0F0F0)
+private val BlueText = Color(0xFF3F51B5)
+private val TimerGreen = Color(0xFF4CAF50)
+private val PauseButtonColor = Color(0xFFE91E63)
+private val NextButtonColor = Color(0xFF2196F3)
+private val GoldButtonColor = Color(0xFFFFD700)
 
 @Composable
 fun vueListCompetition(viewModel: ViewModelProvider, navController: NavHostController){
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BackgroundColor)
+    ) {
+        val viewModelCompetitions = viewModel[CompetitionViewModel::class.java]
+        val competitionsResult = viewModelCompetitions.competitions.observeAsState()
 
-    val viewModelCompetitions = viewModel[CompetitionViewModel::class.java]
-    val competitionsResult = viewModelCompetitions.competitions.observeAsState()
-
-    LaunchedEffect(Unit) {
-        viewModelCompetitions.getCompetitions()
-    }
-    Column {
-        when(val result = competitionsResult.value){
-            is NetworkResponse.Error -> {
-                Text(text = result.message)
-            }
-            NetworkResponse.Loading -> {
-                CircularProgressIndicator()
-            }
-            is NetworkResponse.Success -> {
-                ParkourDetails(data = result.data,navController)
-            }
-            null -> {}
+        LaunchedEffect(Unit) {
+            viewModelCompetitions.getCompetitions()
         }
 
-    }
-}
-
-@Composable
-fun ParkourDetails(data: Competitions, navController: NavHostController) {
-    Box(modifier = Modifier.fillMaxSize()) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(35.dp))
-            Text("List of Competition", fontSize = 40.sp)
-            Spacer(modifier = Modifier.height(25.dp))
+            // Titre en haut de la page avec le style de l'image
+            Text(
+                text = "LISTE DES COMPETITIONS",
+                modifier = Modifier.padding(top = 30.dp, bottom = 16.dp),
+                color = BlueText,
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
 
-            affichageCompetiton(data, navController)
+            when(val result = competitionsResult.value){
+                is NetworkResponse.Error -> {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        elevation = CardDefaults.cardElevation(4.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            text = result.message,
+                            modifier = Modifier.padding(16.dp),
+                            color = Color.Red
+                        )
+                    }
+                }
+                NetworkResponse.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = BlueText
+                        )
+                    }
+                }
+                is NetworkResponse.Success -> {
+                    ParkourDetails(data = result.data, navController)
+                }
+                null -> {}
+            }
         }
 
         Button(
@@ -93,58 +125,83 @@ fun ParkourDetails(data: Competitions, navController: NavHostController) {
     }
 }
 
-
 @Composable
-fun affichageCompetiton(data: Competitions, navController: NavHostController) {
-    LazyColumn {
+fun ParkourDetails(data: Competitions, navController: NavHostController) {
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         items(data.toList()) { competition ->
-            var showNewButtons = remember { mutableStateOf(false) }
-            Button({
-                if (!showNewButtons.value){
-                    showNewButtons.value = true
-                }else {
-                    showNewButtons.value = false
-                }
-            }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
+            val showNewButtons = remember { mutableStateOf(false) }
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                elevation = CardDefaults.cardElevation(4.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                )
+            ) {
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        text = competition.name,
-                        fontSize = 30.sp
-                    )
-
-                    Spacer(modifier = Modifier.height(5.dp))
-
-                    Text(
-                        text = "Age : " + competition.age_min + " - " + competition.age_max,
-                        fontSize = 15.sp
-                    )
-
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                    Button(
+                        onClick = {
+                            showNewButtons.value = !showNewButtons.value
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text(
-                            text = "Gender : " + if (competition.gender == "F") "Woman" else "Man",
-                            fontSize = 15.sp,
-                        )
-                        Spacer(modifier = Modifier.width(20.dp))
-                        Text(
-                            text = "Has retry : " + if (competition.has_retry == 0) "No" else "Yes",
-                            fontSize = 15.sp,
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(8.dp)
+                        ) {
+                            Text(
+                                text = competition.name,
+                                fontSize = 26.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = BlueText
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text(
+                                text = "Age : ${competition.age_min} - ${competition.age_max}",
+                                fontSize = 16.sp
+                            )
+
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Gender : ${if (competition.gender == "F") "Woman" else "Man"}",
+                                    fontSize = 16.sp
+                                )
+                                Spacer(modifier = Modifier.width(20.dp))
+                                Text(
+                                    text = "Has retry : ${if (competition.has_retry == 0) "No" else "Yes"}",
+                                    fontSize = 16.sp
+                                )
+                            }
+                        }
                     }
+
+                    sousBouton(showNewButtons, navController, competition)
                 }
             }
-
-            sousBouton(showNewButtons,navController,competition)
-
         }
     }
 }
-
 
 @Composable
 fun sousBouton(
@@ -155,32 +212,39 @@ fun sousBouton(
     if (showNewButtons.value) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
         ) {
             Button(
                 onClick = { navController.navigate(Routes.vueListCompetitionsCompetitors + "/" + competition.id) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFFD700),
+                    containerColor = GoldButtonColor,
                     contentColor = Color.Black
                 ),
-                modifier = Modifier.width(250.dp)
+                modifier = Modifier
+                    .width(250.dp)
+                    .padding(vertical = 4.dp),
+                shape = RoundedCornerShape(24.dp)
             ) {
-                Text(" ➤ Competitors", fontSize = 20.sp)
+                Text(" ➤ Competitors", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Button(
                 onClick = { navController.navigate(Routes.vueListCompetitionsParkours + "/" + competition.id) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFFD700),
+                    containerColor = GoldButtonColor,
                     contentColor = Color.Black
                 ),
-                modifier = Modifier.width(250.dp)
+                modifier = Modifier
+                    .width(250.dp)
+                    .padding(vertical = 4.dp),
+                shape = RoundedCornerShape(24.dp)
             ) {
-                Text(" ➤ Parkours", fontSize = 20.sp)
+                Text(" ➤ Parkours", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
         }
     }
 }
-
