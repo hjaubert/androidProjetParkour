@@ -26,13 +26,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import com.example.androidprojetparkour.api.NetworkResponse
+import com.example.androidprojetparkour.api.models.competitors.CompetitorsItem
 import com.example.androidprojetparkour.api.models.obstacles.ObstaclesCourse
+import com.example.androidprojetparkour.api.models.performances.PerformancesItem
 import com.example.androidprojetparkour.api.models.performancesObstacles.PerformanceObstaclesItem
 import com.example.androidprojetparkour.viewModel.CompetitorViewModel
 import com.example.androidprojetparkour.viewModel.ObstacleViewModel
 import com.example.androidprojetparkour.viewModel.PerformanceObstacleViewModel
+import com.example.androidprojetparkour.viewModel.PerformanceViewModel
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
@@ -40,20 +44,31 @@ import java.util.concurrent.TimeUnit
 fun vueArbitrage(
     viewModel: ViewModelProvider,
     idCourse: Int,
-    idCompetitor: Int
+    idCompetitor: Int,
+    idCompetition: Int
 ) {
 
     val obstacleViewModel = viewModel[ObstacleViewModel::class.java]
     val competitorViewModel = viewModel[CompetitorViewModel::class.java]
+
     var (numObstacle, setNumObstacle) = remember { mutableIntStateOf(1) }
     var (nbObstacles, setnbObstacles) = remember { mutableIntStateOf(0) }
     var (tempsObstacle, setTempsObstacle) = remember { mutableLongStateOf(0) }
     var (nbObstacleTraverse, setnbObstacleTraverse) = remember { mutableIntStateOf(0) }
+    var (time, setTime) = remember { mutableIntStateOf(0) }
 
-    Column(modifier = Modifier.fillMaxSize().padding(25.dp)) {
-        ListObstacles(obstacleViewModel, competitorViewModel ,numObstacle, idCourse) { nb -> setnbObstacles(nb) }
-        Chronometre(numObstacle, nbObstacles, { num -> setNumObstacle(num) }, tempsObstacle, { temps -> setTempsObstacle(temps) },
-            obstacleViewModel, idCourse, idCompetitor, viewModel)
+    var (nextCompetitor, setNextCompetitor) = remember { mutableIntStateOf(1) }
+
+    val competitor = competitorViewModel.competitorDetails
+    competitorViewModel.getCompetitorDetails(idCompetitor)
+
+    when(nextCompetitor){
+        1 -> Column(modifier = Modifier.fillMaxSize().padding(25.dp)) {
+            ListObstacles(obstacleViewModel, competitorViewModel ,numObstacle, idCourse, competitor) { nb -> setnbObstacles(nb) }
+            Chronometre(numObstacle, nbObstacles, { num -> setNumObstacle(num) }, tempsObstacle, { temps -> setTempsObstacle(temps) },
+                obstacleViewModel, idCourse, idCompetitor, viewModel, { next -> setNextCompetitor(next) }, { t -> setTime(t)})
+        }
+        0 -> vueNextCompetitor( { next -> setNextCompetitor(next) }, time)
     }
 }
 
@@ -63,14 +78,15 @@ fun ListObstacles(
     competitorViewModel: CompetitorViewModel,
     numObstacle: Int,
     idCourse: Int,
-    setNbObstacles: (Int) -> Unit
+    competitor: LiveData<NetworkResponse<CompetitorsItem>>,
+    setNbObstacles: (Int) -> Unit,
 ){
     val obstacles = obstacleViewModel.courseObstacles.observeAsState()
     LaunchedEffect(Unit) {
         obstacleViewModel.getCourseObstacles(idCourse)
     }
 
-    Column {
+    Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
         when(val result = obstacles.value){
             is NetworkResponse.Error -> {
                 Text(text = result.message)
@@ -85,13 +101,24 @@ fun ListObstacles(
             null -> {}
         }
 
+        when(val result = competitor.value){
+            is NetworkResponse.Error -> {
+                Text(text = result.message)
+            }
+            NetworkResponse.Loading -> {
+                CircularProgressIndicator()
+            }
+            is NetworkResponse.Success -> {
+                Text(text = result.data.first_name + result.data.last_name)
+            }
+            null -> {}
+        }
     }
 }
 
 @Composable
 fun afficheObstacleEnCours(data: ObstaclesCourse, numObstacle: Int) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
+    Column {
         Text(text = data[numObstacle].obstacle_name)
     }
 }
@@ -106,7 +133,9 @@ fun Chronometre(
     obstacleViewModel: ObstacleViewModel,
     idCourse: Int,
     idCompetitor: Int,
-    viewModel: ViewModelProvider
+    viewModel: ViewModelProvider,
+    setNextCompetitor: (Int) -> Unit,
+    setTimeChrono: (Int) -> Unit
 ) {
 
     var time by remember { mutableLongStateOf(0) }
@@ -117,6 +146,7 @@ fun Chronometre(
     var clickEnabled by remember { mutableStateOf(true) }
 
     val performanceObstacleViewModel = viewModel[PerformanceObstacleViewModel::class.java]
+    val performanceViewModel = viewModel[PerformanceViewModel::class.java]
 
     val obstacles = obstacleViewModel.courseObstacles
     LaunchedEffect(Unit) {
@@ -158,7 +188,7 @@ fun Chronometre(
                         id = -1,
                         obstacle_id = numObstacle,
                         performance_id = -1,
-                        time = tempsByObstacle,
+                        time = tempsByObstacle.toInt(),
                         has_fell = 0,
                         to_verify = 0,
                         created_at = "",
@@ -166,22 +196,42 @@ fun Chronometre(
                     ))
                     clickEnabled = false
                     isRunning = false
-                    var tempsTotal = 0L
+                    performanceViewModel.createPerformance(PerformancesItem(
+                        id = -1,
+                        competitor_id = idCompetitor,
+                        course_id = idCourse,
+                        created_at = "",
+                        updated_at = "",
+                        access_token_id = -1,
+                        status = "over",
+                        total_time = time.toInt(),
+                    ))
+                    val performances =  performanceViewModel.performances.value
+                    performanceViewModel.getPerformances()
                     for(o in performanceObstacleViewModel.listTimeByObstacle){
+                        performanceObstacleViewModel.createPerformanceObstacle(PerformanceObstaclesItem(
+                            id = -1,
+                            obstacle_id = o.obstacle_id,
+                            performance_id = if(performances is NetworkResponse.Success) performances.data[performances.data.size - 1].id else -1,
+                            time = o.time,
+                            has_fell = 0,
+                            to_verify = 0,
+                            created_at = "",
+                            updated_at = ""
+                        ))
                         Log.d("Resultat", o.time.toString())
-                        tempsTotal += o.time
                     }
-                    Log.d("Temps Calculé", "Temps Calculé : $tempsTotal")
                     Log.d("Temps obtenu", "Temps obtenu : $time")
-                    //Afficher vue de confirmation
-                    //Si il y a plus de concurrents, passer au classement
+                    setTimeChrono(time.toInt())
+                    setNextCompetitor(0)
+                    setNumObstacle(0)
                 } else if(isRunning) {
                     // Sauvegarder le temps pour l'obstacle actuel avant de passer au suivant
                     performanceObstacleViewModel.addObstacleParkour(PerformanceObstaclesItem(
                         id = -1,
                         obstacle_id = numObstacle,
                         performance_id = -1,
-                        time = tempsByObstacle,
+                        time = tempsByObstacle.toInt(),
                         has_fell = 0,
                         to_verify = 0,
                         created_at = "",
