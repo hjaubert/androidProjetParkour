@@ -7,6 +7,7 @@ import com.example.androidprojetparkour.api.models.competitors.Competitors
 import com.example.androidprojetparkour.api.models.competitors.CompetitorsItem
 import com.example.androidprojetparkour.api.models.courses.Courses
 import com.example.androidprojetparkour.api.models.courses.CoursesItem
+import com.example.androidprojetparkour.api.models.obstacles.ObstaclePost
 import com.example.androidprojetparkour.api.models.obstacles.ObstaclesCourse
 import com.example.androidprojetparkour.api.models.obstacles.Obstacles
 import com.example.androidprojetparkour.api.models.obstacles.ObstaclesItem
@@ -121,7 +122,7 @@ interface ParkourApi {
     suspend fun storeCourse(@Body course: CoursesItem): Response<CoursesItem>
 
     @POST("courses/{id}/add_obstacle")
-    suspend fun addObstacleToCourse(@Path("id") courseId: Int, @Body obstacleId: Int): Response<ObstaclesItem>
+    suspend fun addObstacleToCourse(@Path("id") courseId: Int, @Body obstaclePost: ObstaclePost): Response<ObstaclesItem>
 
     @POST("courses/{id}/update_obtacle_position")
     suspend fun updateObstaclePosition(@Path("id") courseId: Int, @Body obstacleId: Int, @Body position: Int): Response<ObstaclesItem>
