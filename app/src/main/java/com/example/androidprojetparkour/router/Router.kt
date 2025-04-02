@@ -35,6 +35,8 @@ fun Router(viewModel: ViewModelProvider) {
             val idCompetitor = dataString?.toInt() ?:-1
             vueArbitrage(viewModel, idCourse, idCompetitor)
         }
+        composable(Routes.vueNextCompetitor +"/{data}"){
 
+        }
     })
 }

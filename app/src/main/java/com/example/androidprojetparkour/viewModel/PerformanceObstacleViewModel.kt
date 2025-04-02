@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.RetrofitInstance
+import com.example.androidprojetparkour.api.models.performances.Performances
+import com.example.androidprojetparkour.api.models.performances.PerformancesItem
 import com.example.androidprojetparkour.api.models.performancesObstacles.PerformanceObstacles
 import com.example.androidprojetparkour.api.models.performancesObstacles.PerformanceObstaclesItem
 import kotlinx.coroutines.launch
@@ -31,6 +33,9 @@ class PerformanceObstacleViewModel : ViewModel() {
 
     private val _deletePerformanceObstacleResult = MutableLiveData<NetworkResponse<Unit>>()
     val deletePerformanceObstacleResult: LiveData<NetworkResponse<Unit>> = _deletePerformanceObstacleResult
+
+    val listTimeByObstacle = ArrayList<PerformanceObstaclesItem>()
+    //val listTimeByObstacle: ArrayList<PerformanceObstaclesItem> = _listTimeByObstacle
 
     fun getPerformanceObstacles() {
         viewModelScope.launch {
@@ -121,4 +126,9 @@ class PerformanceObstacleViewModel : ViewModel() {
             }
         }
     }
+
+    fun addObstacleParkour(obstaclesItem: PerformanceObstaclesItem){
+        listTimeByObstacle.add(obstaclesItem)
+    }
+
 }

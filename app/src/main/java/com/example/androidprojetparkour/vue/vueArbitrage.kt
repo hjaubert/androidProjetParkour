@@ -25,20 +25,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.api.NetworkResponse
-import com.example.androidprojetparkour.api.models.obstacles.ObstacleCourseItem
 import com.example.androidprojetparkour.api.models.obstacles.ObstaclesCourse
-import com.example.androidprojetparkour.bdd.BasePerformances
-import com.example.androidprojetparkour.bdd.PerformanceObstacleBdd
-import com.example.androidprojetparkour.bdd.PerformanceObstacleBddViewModel
-import com.example.androidprojetparkour.bdd.PerformanceObstacleBddViewModelFactory
-import com.example.androidprojetparkour.bdd.Repository
+import com.example.androidprojetparkour.api.models.performancesObstacles.PerformanceObstaclesItem
 import com.example.androidprojetparkour.viewModel.CompetitorViewModel
 import com.example.androidprojetparkour.viewModel.ObstacleViewModel
+import com.example.androidprojetparkour.viewModel.PerformanceObstacleViewModel
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
@@ -56,17 +51,10 @@ fun vueArbitrage(
     var (tempsObstacle, setTempsObstacle) = remember { mutableLongStateOf(0) }
     var (nbObstacleTraverse, setnbObstacleTraverse) = remember { mutableIntStateOf(0) }
 
-    /*val db = BasePerformances.getInstance(LocalContext.current)
-    val vm: PerformanceObstacleBddViewModel = viewModel(factory =
-        PerformanceObstacleBddViewModelFactory(
-            Repository(db)
-        )
-    )*/
-
     Column(modifier = Modifier.fillMaxSize().padding(25.dp)) {
         ListObstacles(obstacleViewModel, competitorViewModel ,numObstacle, idCourse) { nb -> setnbObstacles(nb) }
         Chronometre(numObstacle, nbObstacles, { num -> setNumObstacle(num) }, tempsObstacle, { temps -> setTempsObstacle(temps) },
-            obstacleViewModel, idCourse, idCompetitor/*, vm*/)
+            obstacleViewModel, idCourse, idCompetitor, viewModel)
     }
 }
 
@@ -119,7 +107,7 @@ fun Chronometre(
     obstacleViewModel: ObstacleViewModel,
     idCourse: Int,
     idCompetitor: Int,
-    //vm: PerformanceObstacleBddViewModel
+    viewModel: ViewModelProvider
 ) {
 
     var time by remember { mutableLongStateOf(0) }
@@ -127,16 +115,19 @@ fun Chronometre(
     var isRunning by remember { mutableStateOf(false) }
     var startTime by remember { mutableLongStateOf(0) }
     var startTimeObstacle by remember { mutableLongStateOf(0) }
+    var clickEnabled by remember { mutableStateOf(true) }
+
+    val performanceObstacleViewModel = viewModel[PerformanceObstacleViewModel::class.java]
 
     val obstacles = obstacleViewModel.courseObstacles
-    val result = obstacles.value
+    //val result = obstacles.value
     LaunchedEffect(Unit) {
         obstacleViewModel.getCourseObstacles(idCourse)
     }
-    var listObstacle = listOf<ObstacleCourseItem>()
+    /*var listObstacle = listOf<ObstacleCourseItem>()
     if(result is NetworkResponse.Success){
         listObstacle = result.data
-    }
+    }*/
 
 
     Column(modifier = Modifier.fillMaxSize().padding(15.dp),
@@ -159,9 +150,8 @@ fun Chronometre(
                         startTime = System.currentTimeMillis() - time
                         startTimeObstacle = System.currentTimeMillis() - tempsObstacle
                         isRunning = true
-                        //keyboardController?.hide()
                     }
-                }, modifier = Modifier.weight(1f)
+                }, modifier = Modifier.weight(1f), enabled = clickEnabled
             ) {
                 Text(text = if(isRunning) "Pause" else "Lancer", color = Color.White)
             }
@@ -170,31 +160,39 @@ fun Chronometre(
 
             Button(onClick = {
                 if(numObstacle == nbObstacles - 1){
+                    clickEnabled = false
                     isRunning = false
+                    var tempsTotal = 0L
+                    for(o in performanceObstacleViewModel.listTimeByObstacle){
+                        Log.d("Resultat", o.time.toString())
+                        tempsTotal += o.time
+                    }
+                    Log.d("Resultat", tempsTotal.toString())
                     //Afficher vue de confirmation
                     //Si il y a plus de concurrents, passer au classement
                 }
-                tempsByObstacle = 0
-                startTimeObstacle = System.currentTimeMillis() - tempsByObstacle
                 //startTime = System.currentTimeMillis() - time
                 if(isRunning){
-                    Log.d("Temps", time.toString())
-                    Log.d("Temps", tempsObstacle.toString())
-
-                    /*vm.insertPerformanceObstacle(PerformanceObstacleBdd(
-                        obstacle_id = listObstacle[numObstacle].id,
-                        performance_id = idCompetitor,
+                    performanceObstacleViewModel.addObstacleParkour(PerformanceObstaclesItem(
+                        id = -1,
+                        obstacle_id = numObstacle,
+                        performance_id = -1,
                         time = tempsByObstacle,
                         has_fell = 0,
-                        to_verify = 0
-                    ))*/
-
+                        to_verify = 0,
+                        created_at = "",
+                        updated_at = ""
+                    ))
+                    Log.d("Temps", time.toString())
+                    Log.d("Temps", tempsObstacle.toString())
                     setNumObstacle(numObstacle + 1)
                 }
+                tempsByObstacle = 0
+                startTimeObstacle = System.currentTimeMillis() - tempsByObstacle
                 //isRunning = false
             }, modifier = Modifier.weight(1f)) {
 
-                Text(text = "Prochain Obstacle", color = Color.White)
+                Text(text = if(numObstacle == nbObstacles - 1) "Fin de la course" else "Prochain Obstacle", color = Color.White)
 
             }
 
