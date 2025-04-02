@@ -31,12 +31,12 @@ import com.example.androidprojetparkour.viewModel.ObstacleViewModel
 
 
 @Composable
-fun vueListObstales(viewModel: ViewModelProvider, data: Int, navController: NavHostController){
+fun vueListObstales(viewModel: ViewModelProvider, coursId: Int, navController: NavHostController){
     val viewModelObstacle = viewModel[ObstacleViewModel::class.java]
     val obstacleResult = viewModelObstacle.courseObstacles.observeAsState()
 
     LaunchedEffect(Unit) {
-        viewModelObstacle.getCourseObstacles(data)
+        viewModelObstacle.getCourseObstacles(coursId)
     }
 
     Column {
@@ -48,7 +48,7 @@ fun vueListObstales(viewModel: ViewModelProvider, data: Int, navController: NavH
                 CircularProgressIndicator()
             }
             is NetworkResponse.Success -> {
-                listObstacleDisponible(data = result.data,navController, data)
+                listObstacleDisponible(result.data,navController, coursId)
             }
             null -> {}
         }
@@ -57,7 +57,7 @@ fun vueListObstales(viewModel: ViewModelProvider, data: Int, navController: NavH
 }
 
 @Composable
-fun listObstacleDisponible(data: ObstaclesCourse, navController: NavHostController, data1: Int){
+fun listObstacleDisponible(obstaclesCourse: ObstaclesCourse, navController: NavHostController, coursId: Int){
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -74,7 +74,7 @@ fun listObstacleDisponible(data: ObstaclesCourse, navController: NavHostControll
             Spacer(modifier = Modifier.height(25.dp))
 
             LazyColumn {
-                items(data.toList()) {obstacle ->
+                items(obstaclesCourse.toList()) {obstacle ->
                     Button({
 
                     }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
@@ -93,7 +93,7 @@ fun listObstacleDisponible(data: ObstaclesCourse, navController: NavHostControll
 
         Button(
             onClick = {
-                navController.navigate(Routes.vueListObstaclesDisponible+"/"+data1)
+                navController.navigate(Routes.vueListObstaclesDisponible+"/"+coursId)
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,  // Couleur de fond

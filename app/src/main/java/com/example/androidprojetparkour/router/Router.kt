@@ -50,10 +50,10 @@ fun Router(viewModel: ViewModelProvider) {
             val data = dataString?.toInt() ?:-1
             vueListCompetitionsCompetitorsAdd(viewModel,data,navController)
         }
-        composable(Routes.vueListObstacles +"/{data}"){
-            val dataString = it.arguments?.getString("data")
-            val data = dataString?.toInt() ?:-1
-            vueListObstales(viewModel,data,navController)
+        composable(Routes.vueListObstacles +"/{coursId}"){
+            val coursIdString = it.arguments?.getString("coursId")
+            val coursId = coursIdString?.toInt() ?:-1
+            vueListObstales(viewModel,coursId,navController)
         }
         composable(Routes.vueListObstaclesDisponible +"/{data}"){
             val dataString = it.arguments?.getString("data")

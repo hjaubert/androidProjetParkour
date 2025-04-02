@@ -184,8 +184,6 @@ fun affichageListCompetitorAdd(
     LazyColumn {
         items(data.toList()) { competitors ->
             Button({
-                Log.d("competition",competition.toString())
-                Log.d("competiteur",competitors.id.toString())
 
                 val competitorInCompetitionPost = CompetitorInCompetitionPost(competitors.id)
 
