@@ -1,25 +1,35 @@
 package com.example.androidprojetparkour.vue
 
-import android.util.Log
-import android.widget.Space
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.api.NetworkResponse
-import com.example.androidprojetparkour.api.models.competitors.CompetitorsItem
+import com.example.androidprojetparkour.router.Routes
 import com.example.androidprojetparkour.viewModel.CompetitionViewModel
-import com.example.androidprojetparkour.viewModel.CompetitorViewModel
-import com.example.androidprojetparkour.viewModel.CourseViewModel
+import com.example.androidprojetparkour.api.models.competitors.Competitors as Competitors1
 
 @Composable
 fun vueListConcurents(
@@ -28,20 +38,13 @@ fun vueListConcurents(
     navController: NavHostController,
     dataId: Int
 ) {
-
     val viewModelCompetitions = viewModel[CompetitionViewModel::class.java]
     val competitionsResult = viewModelCompetitions.registeredCompetitorsInCompetition.observeAsState()
-
-    val viewModelCours = viewModel[CourseViewModel::class.java]
-    val competitorsResult = viewModelCours.competitorCourses.observeAsState()
-
-
 
     LaunchedEffect(Unit) {
         viewModelCompetitions.getRegisteredCompetitorsInCompetition(dataId)
     }
     Column {
-        var listCompetitors = mutableListOf<CompetitorsItem>()
         when(val result = competitionsResult.value){
             is NetworkResponse.Error -> {
                 Text(text = result.message)
@@ -50,48 +53,52 @@ fun vueListConcurents(
                 CircularProgressIndicator()
             }
             is NetworkResponse.Success -> {
-                Log.d("affichage des competitors", result.data.toString())
-                for(competitor in result.data){
-
-                    LaunchedEffect(Unit) {
-                        viewModelCours.getCompetitorCourses(competitor.id)
-                    }
-
-
-                    when(val result1 = competitorsResult.value) {
-                        is NetworkResponse.Error -> {
-                            Text(text = result1.message)
-                        }
-
-                        NetworkResponse.Loading -> {
-                            CircularProgressIndicator()
-                        }
-
-                        is NetworkResponse.Success -> {
-                            for(cours in result1.data){
-
-                                if(cours.id == data){
-                                    Log.d("svsv", cours.id.toString() + " " + data)
-                                    listCompetitors.add(competitor)
-                                }
-                            }
-                        }
-
-                        null -> {}
-                    }
-
-                }
-                Column {
-                    Spacer(modifier = Modifier.height(20.dp))
-                    for (elem in listCompetitors){
-                        Text(elem.first_name + " " + elem.last_name)
-                    }
-                }
-
-
+                ListConcurent(data = result.data,navController,dataId)
             }
             null -> {}
         }
 
+    }
+}
+
+@Composable
+fun ListConcurent(data: Competitors1, navController: NavHostController, competition: Int) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+
+            ) {
+            Spacer(modifier = Modifier.height(35.dp))
+            Text("List of Comcurrents", fontSize = 40.sp)
+            Spacer(modifier = Modifier.height(25.dp))
+
+            affichageListConcurent(data,navController)
+
+        }   
+    }
+}
+
+@Composable
+fun affichageListConcurent(data: Competitors1, navController: NavHostController) {
+    LazyColumn {
+        items(data.toList()) { competitors ->
+            Button({ }, modifier = Modifier.fillMaxWidth().padding(15.dp)) {
+                Row (
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Text(
+                        text = competitors.first_name,
+                        fontSize = 30.sp
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = competitors.last_name,
+                        fontSize = 30.sp
+                    )
+                }
+            }
+        }
     }
 }
