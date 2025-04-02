@@ -34,7 +34,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.models.obstacles.ObstaclesCourse
 import com.example.androidprojetparkour.router.Router
+import com.example.androidprojetparkour.viewModel.CompetitionViewModel
 import com.example.androidprojetparkour.viewModel.ObstacleViewModel
+import com.example.androidprojetparkour.vue.vueArbitrage
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
@@ -44,8 +46,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val viewModel = ViewModelProvider(this)
-            Router(viewModel)
-
+            //Router(viewModel)
+            vueArbitrage(viewModel, 2795, 4678)
+            /*val id = 0
+            val viewModelCompetitions  = ViewModelProvider(this)[CompetitionViewModel::class.java]
+            val competition = viewModelCompetitions.oneCompetition.observeAsState()
+            LaunchedEffect(Unit) {
+                viewModelCompetitions.getOneCompetition(id)
+            }*/
         }
     }
 }

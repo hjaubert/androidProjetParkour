@@ -31,8 +31,9 @@ fun Router(viewModel: ViewModelProvider) {
         }
         composable(Routes.vueArbitrage +"/{data}"){
             val dataString = it.arguments?.getString("data")
-            val data = dataString?.toInt() ?:-1
-            vueArbitrage(viewModel,data)
+            val idCourse = dataString?.toInt() ?:-1
+            val idCompetitor = dataString?.toInt() ?:-1
+            vueArbitrage(viewModel,idCourse,idCompetitor)
         }
 
     })
