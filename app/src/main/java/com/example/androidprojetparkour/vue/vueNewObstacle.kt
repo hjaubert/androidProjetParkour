@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import com.example.androidprojetparkour.api.NetworkResponse
+import com.example.androidprojetparkour.api.models.obstacles.ObstaclePost
 import com.example.androidprojetparkour.api.models.obstacles.ObstaclesItem
 import com.example.androidprojetparkour.router.Routes
 import com.example.androidprojetparkour.viewModel.CourseViewModel
@@ -77,7 +78,9 @@ fun vueNewObstacle(viewModel: ViewModelProvider, navController: NavHostControlle
 
                     viewModelObstacles.createObstacle(newObstacle)
 
-                    viewModelCourses.addObstacleToCourse(data,newObstacle.id)
+                    val obsaclepost = ObstaclePost(newObstacle.id)
+
+                    viewModelCourses.addObstacleToCourse(data,obsaclepost)
 
 
                     navController.navigate(Routes.vueListObstaclesDisponible + "/" + data);
