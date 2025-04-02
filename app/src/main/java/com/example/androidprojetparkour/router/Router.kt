@@ -1,11 +1,14 @@
 package com.example.androidprojetparkour.router
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.androidprojetparkour.vue.vueArbitrage
+import com.example.androidprojetparkour.vue.vueClassement
 import com.example.androidprojetparkour.vue.vueListCompetition
 import com.example.androidprojetparkour.vue.vueListCompetitionsCompetitors
 import com.example.androidprojetparkour.vue.vueListCompetitionsCompetitorsAdd
@@ -15,6 +18,7 @@ import com.example.androidprojetparkour.vue.vueNewCompetition
 import com.example.androidprojetparkour.vue.vueNewCompetitors
 import com.example.androidprojetparkour.vue.vueNewParkour
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Router(viewModel: ViewModelProvider) {
 
@@ -69,6 +73,14 @@ fun Router(viewModel: ViewModelProvider) {
             val data = dataString?.toInt() ?:-1
             vueNewCompetitors(viewModel,navController,data)
         }
+
+        composable(Routes.vueClassement +"/{data}"){
+            val dataString = it.arguments?.getString("data")
+            val data = dataString?.toInt() ?:-1
+            vueClassement(viewModel,navController,data)
+        }
+
+
 
 
     })
