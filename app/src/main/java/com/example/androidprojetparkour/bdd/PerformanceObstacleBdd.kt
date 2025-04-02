@@ -1,4 +1,4 @@
-package com.example.androidprojetparkour.bdd.models
+package com.example.androidprojetparkour.bdd
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

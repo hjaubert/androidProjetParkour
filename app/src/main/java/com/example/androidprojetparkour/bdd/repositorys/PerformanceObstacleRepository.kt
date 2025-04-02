@@ -1,5 +1,5 @@
 import com.example.androidprojetparkour.bdd.PerformancesDAO
-import com.example.androidprojetparkour.bdd.models.PerformanceObstacleBdd
+import com.example.androidprojetparkour.bdd.PerformanceObstacleBdd
 import kotlinx.coroutines.flow.Flow
 
 class PerformanceObstacleRepository(private val performanceObstacleDao: PerformancesDAO) {

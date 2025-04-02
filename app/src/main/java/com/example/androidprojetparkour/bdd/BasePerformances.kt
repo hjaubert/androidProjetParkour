@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [],
+    entities = [PerformanceObstacleBdd::class],
     version = 1
 )
 abstract class BasePerformances : RoomDatabase() {

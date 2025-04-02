@@ -29,11 +29,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import com.example.androidprojetparkour.api.NetworkResponse
 import com.example.androidprojetparkour.api.models.obstacles.ObstacleCourseItem
-import com.example.androidprojetparkour.bdd.view_models.PerformanceObstacleBddViewModel
+import com.example.androidprojetparkour.bdd.PerformanceObstacleBddViewModel
 import com.example.androidprojetparkour.bdd.view_models.PerformancesBddViewModel
 import com.example.androidprojetparkour.api.models.obstacles.ObstaclesCourse
 import com.example.androidprojetparkour.viewModel.CompetitorViewModel
-import com.example.androidprojetparkour.viewModel.CourseViewModel
 import com.example.androidprojetparkour.viewModel.ObstacleViewModel
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit

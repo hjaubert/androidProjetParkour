@@ -1,10 +1,8 @@
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.androidprojetparkour.bdd.PerformancesDAO
 import com.example.androidprojetparkour.bdd.PerformanceObstacleBdd
-import com.example.androidprojetparkour.bdd.models.PerformanceObstacleBdd
-import com.example.androidprojetparkour.bdd.view_models.PerformanceObstacleBddViewModel
+import com.example.androidprojetparkour.bdd.PerformanceObstacleBddViewModel
 
 class PerformanceObstacleViewModelFactory(
     private val application: Application
