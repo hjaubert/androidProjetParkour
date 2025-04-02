@@ -12,6 +12,7 @@ import com.example.androidprojetparkour.vue.vueListCompetitionsCompetitorsAdd
 import com.example.androidprojetparkour.vue.vueListCompetitionsParkours
 import com.example.androidprojetparkour.vue.vueListConcurents
 import com.example.androidprojetparkour.vue.vueNewCompetition
+import com.example.androidprojetparkour.vue.vueNewCompetitors
 import com.example.androidprojetparkour.vue.vueNewParkour
 
 @Composable
@@ -61,6 +62,12 @@ fun Router(viewModel: ViewModelProvider) {
             val dataStringCompet = it.arguments?.getString("idCompetition")
             val dataId = dataStringCompet?.toInt() ?:-1
             vueListConcurents(viewModel,data,navController,dataId)
+        }
+
+        composable(Routes.vueNewCompetitors +"/{data}"){
+            val dataString = it.arguments?.getString("data")
+            val data = dataString?.toInt() ?:-1
+            vueNewCompetitors(viewModel,navController,data)
         }
 
 
