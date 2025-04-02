@@ -58,9 +58,8 @@ fun Router(viewModel: ViewModelProvider) {
             val dataStringIdCompetitor = it.arguments?.getString("idCompetitor")
             val dataStringIdCompetition = it.arguments?.getString("idCompetition")
             val idCourse = dataStringIdCourse?.toInt() ?:-1
-            val idCompetitor = dataStringIdCompetitor?.toInt() ?:-1
             val idCompetition = dataStringIdCompetition?.toInt() ?:-1
-            vueArbitrage(viewModel, idCourse, idCompetitor, idCompetition)
+            vueArbitrage(viewModel, idCourse, idCompetition)
         }
         composable(Routes.vueListConcurents +"/{data}/{idCompetition}"){
             val dataString = it.arguments?.getString("data")
